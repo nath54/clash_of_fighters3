@@ -277,18 +277,31 @@ class Perso(): #classe personnage
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                 if self.animactu==None or self.animactu[0]!="att3": #si il n'y a pas d'animation ou une différente de l'animation (attaque 3)
                     self.animactu=["att3",0] #on update l'animation en cour
-                    self.image=self.imgs[16] #on update l'image
+                    self.image=self.imgs[24] #on update l'image
                 elif self.animactu[0]=="att3" and self.animactu[1]==0: #on vérifie l'état de l'animation
                     self.animactu=["att3",1] #on update l'animation en cour
-                    self.image=self.imgs[17] #on update l'image
+                    self.image=self.imgs[25] #on update l'image
                 elif self.animactu[0]=="att3" and self.animactu[1]==1: #on vérifie l'état de l'animation
                     self.animactu=["att3",2] #on update l'animation en cour
-                    self.image=self.imgs[18] #on update l'image
+                    self.image=self.imgs[26] #on update l'image
                 elif self.animactu[0]=="att3" and self.animactu[1]==2: #on vérifie l'état de l'animation
                     self.animactu=["att3",0] #on update l'animation en cour
-                    self.image=self.imgs[16] #on update l'image
-        
-        
+                    self.image=self.imgs[24] #on update l'image
+        elif aa=="Defence": #Défence
+            self.bloquerattaque=True # le personnage bloque les attaques
+            if self.animactu==None or self.animactu[0]!="def": #si il n'y a pas d'animation ou une différente de l'animation (defence)
+                self.animactu=["def",0] #on update l'animation en cour
+                self.image=self.imgs[13] #on update l'image
+            elif self.animactu[0]=="def" and self.animactu[1]==0: #on vérifie l'état de l'animation
+                self.animactu=["def",1] #on update l'animation en cour
+                self.image=self.imgs[14] #on update l'image
+            elif self.animactu[0]=="def" and self.animactu[1]==1: #on vérifie l'état de l'animation
+                self.animactu=["def",2] #on update l'animation en cour
+                self.image=self.imgs[15] #on update l'image
+            elif self.animactu[0]=="def" and self.animactu[1]==2: #on vérifie l'état de l'animation
+                self.animactu=["def",0] #on update l'animation en cour
+                self.image=self.imgs[13] #on update l'image
+    
 def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t,bonus):
     pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0)
     for o in objsmap:
@@ -303,6 +316,11 @@ def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,per
             fenetre.blit(p.image,[perso.cam[0]+p.posX,perso.cam[1]+p.posY])
     for b in bonus:
         if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
+            fenetre.blit(b.image,[perso.cam[0]+b.posX,perso.cam[1]+b.posY])
+    pygame.draw.rect(fenetre,(int(perso.vie/perso.vie_totale*255.0),0,0),(fenx+50,feny+15,int(perso.vie/perso.vie_totale*float(fentx-100.0)),35),0)
+    pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+15,int(fentx-100),35),2)
+    pygame.draw.rect(fenetre,(0,0,int(perso.perso.bouclier/perso.bouclier_total*255.0)),(fenx+50,feny+60,int(perso.vie/perso.vie_totale*float(fentx-100.0)),5),0)
+    pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),5),1)
     pygame.display.update()
 
 
