@@ -289,15 +289,20 @@ class Perso(): #classe personnage
                     self.image=self.imgs[16] #on update l'image
         
         
-def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t):
+def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t,bonus):
     pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0)
     for o in objsmap:
         if o.image != None and o.posX >= perso.cam[0] and o.posX <= perso.cam[0]+fentx and o.posY >= perso.cam[1] and o.posY <= perso.cam[1]+fenty:
             fenetre.blit(o.image,[o.posX+perso.cam[0],o.posY+perso.cam[1]])
-    for x in range( int() , int() ):
-        for y in range( int() , int() ):
+    for x in range( int(perso.cam[0]/t) , int((perso.cam[0]+fentx)/t) ):
+        for y in range( int(perso.cam[1]/t) , int((perso.cam[1]+fenty)/t) ):
             if x >= 0 and x < mape.shape[0]-1 and y >= 0 and y < mape.shape[1]-1:
                 fenetre.blit(imgmape[mape[x,y]],[x*t+perso.cam[0],y*t+perso.cam[1]])
+    for p in prs:
+        if p.posX+p.tx >= perso.cam[0] and p.posX-p.tx <= perso.cam[0]+fentx and p.posY+p.ty >= perso.cam[1] and p.posY-p.ty <= perso.cam[1]+fenty:
+            fenetre.blit(p.image,[perso.cam[0]+p.posX,perso.cam[1]+p.posY])
+    for b in bonus:
+        if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
     pygame.display.update()
 
 
