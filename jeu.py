@@ -14,7 +14,11 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme j
     if   nbj == 1 : fens = [ [0,0,tex,tey] ] #on crée les fenetres en fonction du nombre de joueurs
     elif nbj == 2 : fens = [ [0,0,tex,int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
     elif nbj == 3 : fens = [ [0,0,int(tex/2),int(tey/2)] , [int(tex/2),0,int(tex/2),int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
-    elif nbj == 4 : fens = [ [0,0,int(tex/2),int(tey/2)] , [0,0,,int(tex/2),int(tey/2)] , [0,0,int(tex/2),int(tey/2)] , [int(tex/2),int(tey/2),int(tex/2),int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
+    elif nbj == 4 : fens = [ [0,0,int(tex/2),int(tey/2)] , [0,0,int(tex/2),int(tey/2)] , [0,0,int(tex/2),int(tey/2)] , [int(tex/2),int(tey/2),int(tex/2),int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
+    mape=numpy.zeros([25,25],dtype=int)
+    for x in range(mape.shape[0]):
+        for y in range(mape.shape[1]):
+            mape[x,y]=0
     encoure=True #variable encoure qui est vraie tant que le jeu tourne
     while encoure: #tant que encoure est vrai
         #affichage

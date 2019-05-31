@@ -1,6 +1,6 @@
 #coding:utf-8
 #lib.py
-import random,pygame,time,math #on importe les librairies random , pygame , time et math
+import random,pygame,time,numpy,math #on importe les librairies random , pygame , time , numpy et math
 from pygame.locals import * #on importe tout dans la librairie pygame.locals
 
 dim="images/" #variable dim qui contient le chemin du dossier contenant toutes les images du jeu
@@ -25,6 +25,11 @@ def button(x,y,tx,ty,cl,clb): #fonction bouton qui retourne un bouton
     return b #retourne la variable b contenant le fond du bouton qui est cliquable
 def texte(txt,x,y,t,cl): fenetre.blit( pygame.font.SysFont("Serif",ry(t)).render(txt,t,cl) , [rx(x),ry(y)]) #fonction texte qui écrit un texte à l'ecran
 def dist(x1,y1,x2,y2): return int(math.square(math.pow(x1-x2,2)+math.pow(y1-y2,2))) #fonction dist qui retourne la distance entre deoux points
+
+#liste emaps qui contient toutes les données des éléments de la mape
+
+emaps=[ ["herbe",True,"herbe.png"] ]
+#0=nom , 1=pmd
 
 #liste persos qui contient toutes les données des personnages
 persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet"],[20,70,0.7,[],5,"coup de poing"],[250,250,50,[],50,"lasers dans le sol qui ressortent au niveau de l'ennemi"],pygame.transform.scale(pygame.image.load(dim+"jarry.png"),[rx(100),ry(100)]) ]
@@ -65,15 +70,15 @@ def loadimgprs(nom,t): #fonction loadimgprs qui va retourner une liste avec tout
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att11.png"),[t,t])) #on ajoute l'image nom+"_att11.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att12.png"),[t,t])) #on ajoute l'image nom+"_att12.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att13.png"),[t,t])) #on ajoute l'image nom+"_att13.png" à la liste
-    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effets_att1.png"),[t,t])) #on ajoute l'image nom+"_effets_att1.png" à la liste
+    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effet_att1.png"),[t,t])) #on ajoute l'image nom+"_effets_att1.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att21.png"),[t,t])) #on ajoute l'image nom+"_att21.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att22.png"),[t,t])) #on ajoute l'image nom+"_att22.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att23.png"),[t,t])) #on ajoute l'image nom+"_att23.png" à la liste
-    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effets_att2.png"),[t,t])) #on ajoute l'image nom+"_effets_att2.png" à la liste
+    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effet_att2.png"),[t,t])) #on ajoute l'image nom+"_effets_att2.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att31.png"),[t,t])) #on ajoute l'image nom+"_att31.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att32.png"),[t,t])) #on ajoute l'image nom+"_att32.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_att33.png"),[t,t])) #on ajoute l'image nom+"_att33.png" à la liste
-    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effets_att3.png"),[t,t])) #on ajoute l'image nom+"_effets_att3.png" à la liste
+    lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_effet_att3.png"),[t,t])) #on ajoute l'image nom+"_effets_att3.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_mort.png"),[t,t])) #on ajoute l'image nom+"_mort.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_icon.png"),[t,t])) #on ajoute l'image nom+"_icon.png" à la liste
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+"_portrait.png"),[t,t])) #on ajoute l'image nom+"_portrait.png" à la liste
@@ -106,7 +111,7 @@ class Perso(): #classe personnage
         self.tx=t #variable tx qui contient la taille x du personnage
         self.ty=t #variable ty qui contient la taille y du personnage
         self.cam=[self.posX-int(tex/2),self.posY-int(tey/2)] #liste cam qui contient les coordonnées de la caméra du personnage
-        self.imgs=loadimgprs(self.nom) #liste imgs qui contient toutes les images du personnage
+        self.imgs=loadimgprs(self.nom,t) #liste imgs qui contient toutes les images du personnage
         #0=normal , 1=haut(1) , 2=haut(2) , 3=haut(3) , 4=bas(1) , 5=bas(2) , 6=bas(3) , 7=gauche(1) , 8=gauche(2) , 9=gauche(3)
         #10=droite(1) , 11=droite(2) , 12=droite(3) , 13=defence(1) , 14=defence(2) , 15=defence(3)  , 16=att1(1) , 17=att1(2) , 18=att1(3)
         #19=effets att1 , 20=att2(1) , 21=att2(2) , 22=att2(3) , 23=effets att2 , 24=att3(1) , 25=att3(2) , 26=att3(3) , 27=effets att3
