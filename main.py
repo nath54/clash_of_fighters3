@@ -10,7 +10,7 @@ txts=[pretexte("The Clash of Fighters 3",50,(250,100,50)),pretexte("Keys :",25,(
       pretexte("v",17,(0,0,0)),pretexte("r",17,(0,0,0)),pretexte("Player 3 : ",20,(255,255,255)),pretexte("i",17,(0,0,0)),pretexte("k",17,(0,0,0)),pretexte("j",17,(0,0,0)),pretexte("l",17,(0,0,0)),
       pretexte("y",17,(0,0,0)),pretexte("u",17,(0,0,0)),pretexte("g",17,(0,0,0)),pretexte("h",17,(0,0,0)),pretexte("Player 4 :",20,(255,255,255)),
       pretexte("KP8",17,(0,0,0)),pretexte("KP2",17,(0,0,0)),pretexte("KP4",17,(0,0,0)),pretexte("KP6",17,(0,0,0)),pretexte("KP0",17,(0,0,0)),pretexte("KP .",17,(0,0,0)),pretexte("KP ENTER",17,(0,0,0)),pretexte("KP PLUS",17,(0,0,0)),
-      pretexte("Play ! ",25,(0,0,0))]
+      pretexte("Play ! ",25,(0,0,0)),pretexte("humain",20,(0,0,0)),pretexte("bot",20,(0,0,0))]
 
 print(len(txts))
 
@@ -87,8 +87,8 @@ def aff_menu(p1,p2,p3,p4,fps):
     atexte(txts[44],600,440)
     atexte(txts[45],600,455)
     #
-    bts[0]=button(350,500,200,100,(150,150,0),(0,0,0))
-    atexte(txts[46],400,525)
+    bts[0]=button(350,650,200,100,(150,150,0),(0,0,0))
+    atexte(txts[46],400,675)
     texte("fps : "+str(fps),5,5,15,(50,50,50))
     pygame.display.update()
     return bts
@@ -98,10 +98,14 @@ def main():
     p2=None
     p3=None
     p4=None
-    p1keys=[K_UP,K_DOWN,K_LEFT,K_RIGHT,K_CLEAR,K_END,K_PAGEDOWN,K_PAGEUP]
+    p1keys=[K_UP,K_DOWN,K_LEFT,K_RIGHT,127,K_END,281,280]
     p2keys=[K_e,K_d,K_s,K_f,K_x,K_c,K_v,K_r]
     p3keys=[K_i,K_k,K_j,K_l,K_y,K_u,K_g,K_h]
     p4keys=[K_KP8,K_KP2,K_KP4,K_KP6,K_KP0,K_KP_PERIOD,K_KP_ENTER,K_KP_PLUS]
+    p1tp=0
+    p2tp=0
+    p3tp=0
+    p4tp=0
     fps=0
     encour=True
     while encour:
@@ -111,6 +115,7 @@ def main():
             if event.type==QUIT: encour=False
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE: encour=False
+                print("event key ",event.key)
             elif event.type==MOUSEBUTTONDOWN:
                 pos=pygame.mouse.get_pos()
                 rpos=pygame.Rect(pos[0],pos[1],1,1)
@@ -134,7 +139,7 @@ def main():
                             elif p4<len(persos)-1: p4+=1
                             else: p4=None
                         elif di==0 and (p1!=None or p2!=None or p3!=None or p4!=None):
-                            jeu.main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys)
+                            jeu.main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp)
         t2=time.time()
         tt=t2-t1
         fps=int(1.0/float(tt))

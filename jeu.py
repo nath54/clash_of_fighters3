@@ -109,7 +109,13 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme j
                     if ht[1]>100:
                         try: del(p.hist_degats_texte[p.hist_degats_texte.index(ht)])
                         except: aa=True
+                while len(p.hist_degats_texte)>10: del(p.hist_degats_texte[0])
                 if aa: p.hist_degats_texte=[]
+                if p.vie>0 and time.time()-p.drdgts >= 10:
+                    if p.bouclier<p.bouclier_total:
+                        p.bouclier+=1
+                if p.vie<0: p.vie=0
+                if p.bouclier<0: p.bouclier=0
         nbev=0
         if prs[0]!=None and prs[0].vie>0: nbev+=1
         if prs[1]!=None and prs[1].vie>0: nbev+=1

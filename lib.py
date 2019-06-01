@@ -37,7 +37,7 @@ emaps=[ ["herbe",True,"herbe.png"] , ["terre",True,"terre.png"] ]
 #liste persos qui contient toutes les données des personnages
 persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet",None],[20,70,0.7,[],5,"coup de poing",None],[250,250,50,[],50,"lasers dans le sol qui ressortent au niveau de l'ennemi",None],pygame.transform.scale(pygame.image.load(dim+"jarry.png"),[rx(100),ry(100)]) ]
           ,["bismak",2000,200,10,3,[50,100,1.2,[],15,"coup d'épée",None],[50,100,1.2,[],15,"coup d'épée",None],[200,150,45,[],75,"super coup d'épée",None],pygame.transform.scale(pygame.image.load(dim+"bismak.png"),[rx(100),ry(100)])]
-          ,["fantom",500,50,30,95,[2,70,0.2,[],10,"griffes",None],[25,60,2,[],20,"morsure",None],[60,500,30,[],50,"cri strident",None],pygame.transform.scale(pygame.image.load(dim+"fantom.png"),[rx(100),ry(100)])]
+          ,["fantom",500,50,30,80,[2,70,0.2,[],10,"griffes",None],[25,60,2,[],20,"morsure",None],[60,500,30,[],50,"cri strident",None],pygame.transform.scale(pygame.image.load(dim+"fantom.png"),[rx(100),ry(100)])]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
@@ -142,6 +142,7 @@ class Perso(): #classe personnage
         self.bloquerattaque=False #variable bloquerattaque qui dit si le personnage est en train de bloquer les attaques ou pas
         self.tpef=time.time() #variable tpef qui indique le temps où le personnage a subit pour la derniere fois un effet(attaques)
         self.hist_degats_texte=[] #liste hist_degats_texte qui contient tous les textes qui sont affichés en haut à droite du personnage (ex : -50dg , esquive , bloqué)
+        self.drdgts=time.time() #variable drdgts qui contient le temps où le personnage a encaissé des dégats pour la dernière fois
     def bouger(self,aa,objsmap,prs,mape,t): #fonction bouger du personnage qui permet au personnage de bouger, d'attaquer et de parer les coups de l'adversaire
         if aa=="Up": #bouger vers le haut
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
@@ -234,8 +235,13 @@ class Perso(): #classe personnage
                 for p in prs: #boucle qui retourne tous les personages
                     if  p!=None and p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque1[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                            if p.bloquerattaque:
+                                p.hist_degats_texte.append( ["bloqué",0] )
+                                p.bouclier-=1
+                                p.drgts=time.time()
+                                p.bloquerattaque=False
+                                p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque1[0] #on assigne à la valeur dgts les dégats de l'attaque 1
@@ -250,6 +256,7 @@ class Perso(): #classe personnage
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque1[6]!=None: p.image_effet,p.tpef=[self.imgs[19],self.attaque1[6]],time.time()
+                            p.drdgts=time.time()
                 if self.animactu==None or self.animactu[0]!="att1": #si il n'y a pas d'animation ou une différente de l'animation (attaque 1)
                     self.animactu=["att1",0] #on update l'animation en cour
                     self.image=self.imgs[16] #on update l'image
@@ -270,11 +277,17 @@ class Perso(): #classe personnage
                     if p!=None and  p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque2[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         print("attaque")
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                            if p.bloquerattaque:
+                                p.hist_degats_texte.append( ["bloqué",0] )
+                                p.bouclier-=1
+                                p.drgts=time.time()
+                                p.bloquerattaque=False
+                                p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque2[0] #on assigne à la valeur dgts les dégats de l'attaque 2
+                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
                                     p.bouclier-=dgts #on enlève au bouclier les dégats de l'attaque
@@ -282,10 +295,10 @@ class Perso(): #classe personnage
                                 else: #si le bouclier du personnage
                                     dgts-=p.bouclier #une partie des dégats de l'attaque on étés absorbés par le bouclier du personnage attaqué
                                     p.bouclier=0 #le bouclier ne peux plus absorber de dégats
-                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque2[6]!=None: p.image_effet,p.tpef=[self.imgs[23],self.attaque2[6]],time.time()
+                            p.drdgts=time.time()
                 if self.animactu==None or self.animactu[0]!="att2": #si il n'y a pas d'animation ou une différente de l'animation (attaque 2)
                     self.animactu=["att2",0] #on update l'animation en cour
                     self.image=self.imgs[20] #on update l'image
@@ -301,15 +314,21 @@ class Perso(): #classe personnage
         elif aa=="Att3": #Attaque 3
             if time.time()-self.datt3 >= self.attaque3[2] and self.vie>0: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a attaqué avec l'attaque 3 et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
-                self.datt1=time.time() #mise à jour de la variable (derniere fois attaque 3)
+                self.datt3=time.time() #mise à jour de la variable (derniere fois attaque 3)
                 for p in prs: #boucle qui retourne tous les personages
                     if p!=None and p!=self and p.vie>0 and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque3[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                            if p.bloquerattaque:
+                                p.hist_degats_texte.append( ["bloqué",0] )
+                                p.bouclier-=1
+                                p.drgts=time.time()
+                                p.bloquerattaque=False
+                                p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque3[0] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
                                     p.bouclier-=dgts #on enlève au bouclier les dégats de l'attaque
@@ -317,10 +336,10 @@ class Perso(): #classe personnage
                                 else: #si le bouclier du personnage
                                     dgts-=p.bouclier #une partie des dégats de l'attaque on étés absorbés par le bouclier du personnage attaqué
                                     p.bouclier=0 #le bouclier ne peux plus absorber de dégats
-                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque3[6]!=None: p.image_effet,p.tpef=[self.imgs[27],self.attaque3[6]],time.time()
+                            p.drdgts=time.time()
                 if self.animactu==None or self.animactu[0]!="att3": #si il n'y a pas d'animation ou une différente de l'animation (attaque 3)
                     self.animactu=["att3",0] #on update l'animation en cour
                     self.image=self.imgs[24] #on update l'image
@@ -385,8 +404,20 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
     clbouclier=tuple(clbouclier)
     pygame.draw.rect(fenetre,clbouclier,(fenx+50,feny+60,int(perso.bouclier/perso.bouclier_total*float(fentx-100.0)),5),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),5),1)
+    clatt1=(25,25,25)
+    if time.time()-perso.datt1 >= perso.attaque1[2]: clatt1=(250,150,0)
+    clatt2=(25,25,25)
+    if time.time()-perso.datt2 >= perso.attaque2[2]: clatt2=(250,150,0)
+    clatt3=(25,25,25)
+    if time.time()-perso.datt3 >= perso.attaque3[2]: clatt3=(250,150,0)
+    pygame.draw.circle(fenetre,clatt1,(fenx+50,feny+100),rx(5),0)
+    pygame.draw.circle(fenetre,(0,0,0),(fenx+50,feny+100),rx(5),1)
+    pygame.draw.circle(fenetre,clatt2,(fenx+70,feny+100),rx(5),0)
+    pygame.draw.circle(fenetre,(0,0,0),(fenx+70,feny+100),rx(5),1)
+    pygame.draw.circle(fenetre,clatt3,(fenx+90,feny+100),rx(5),0)
+    pygame.draw.circle(fenetre,(0,0,0),(fenx+90,feny+100),rx(5),1)
     if perso.vie<=0:
-        atexte(txtvem,[fenx+fentx/2,feny+fenty/2])
+        atexte(txtvem,fenx+fentx/2,feny+fenty/2)
     pygame.display.update()
 
 
