@@ -102,7 +102,7 @@ def peutbouger(perso,objsmap):
     return c
 
 class Perso(): #classe personnage
-    def __init__(self,p,x,y,t): #fonction initialisation du personnage
+    def __init__(self,p,x,y,t,fx,fy,ftx,fty): #fonction initialisation du personnage
         self.nom=persos[p][0] #variable nom qui contient le nom du personnage
         self.vie_totale=persos[p][1] #variable vie_totale qui contient la vie totale du personnage
         self.vie=self.vie_totale #variable vie qui contient la vie du personnage
@@ -120,7 +120,11 @@ class Perso(): #classe personnage
         self.posY=y #variable posY qui contient la position y du personnage
         self.tx=t #variable tx qui contient la taille x du personnage
         self.ty=t #variable ty qui contient la taille y du personnage
-        self.cam=[self.posX-int(tex/2),self.posY-int(tey/2)] #liste cam qui contient les coordonnées de la caméra du personnage
+        self.fx=fx #variable fx qui contient la position x de la fenetre du personnage
+        self.fy=fy #variable fy qui contient la position y de la fenetre du personnage
+        self.ftx=ftx #variable ftx qui contient la taille x de la fenetre du personnage
+        self.fty=fty #variable fty qui contient la taille y de la fenetre du personnage
+        self.cam=[-self.posX+self.ftx/2,-self.posY+self.fty/2] #liste cam qui contient les coordonnées de la caméra du personnage
         self.imgs=loadimgprs(self.nom,t) #liste imgs qui contient toutes les images du personnage
         #0=normal , 1=haut(1) , 2=haut(2) , 3=haut(3) , 4=bas(1) , 5=bas(2) , 6=bas(3) , 7=gauche(1) , 8=gauche(2) , 9=gauche(3)
         #10=droite(1) , 11=droite(2) , 12=droite(3) , 13=defence(1) , 14=defence(2) , 15=defence(3)  , 16=att1(1) , 17=att1(2) , 18=att1(3)
@@ -137,10 +141,10 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posY+=self.vitesse #on bouge le personnage
+                self.posY-=self.vitesse #on bouge le personnage
                 self.cam[1]+=self.vitesse #on bouge la camera
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posY-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posY+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                     self.cam[1]-=self.vitesse+1 #on bouge la camera
                 if self.animactu==None or self.animactu[0]!="haut": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le haut)
                     self.animactu=["haut",0] #on update l'animation en cour
@@ -158,10 +162,10 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posY-=self.vitesse #on bouge le personnage
+                self.posY+=self.vitesse #on bouge le personnage
                 self.cam[1]-=self.vitesse #on bouge la camera
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posY+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posY-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                     self.cam[1]+=self.vitesse+1 #on bouge la camera
                 if self.animactu==None or self.animactu[0]!="bas": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le bas)
                     self.animactu=["bas",0] #on update l'animation en cour
@@ -179,10 +183,10 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posX+=self.vitesse #on bouge le personnage
+                self.posX-=self.vitesse #on bouge le personnage
                 self.cam[0]+=self.vitesse #on bouge la camera
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posX-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posX+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                     self.cam[0]-=self.vitesse+1 #on bouge la camera
                 if self.animactu==None or self.animactu[0]!="gauche": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la gauche)
                     self.animactu=["gauche",0] #on update l'animation en cour
@@ -200,10 +204,10 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posX-=self.vitesse #on bouge le personnage
+                self.posX+=self.vitesse #on bouge le personnage
                 self.cam[0]-=self.vitesse #on bouge la camera
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posX+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posX-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                     self.cam[0]+=self.vitesse+1 #on bouge la camera
                 if self.animactu==None or self.animactu[0]!="droite": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la droite)
                     self.animactu=["droite",0] #on update l'animation en cour
@@ -325,21 +329,20 @@ class Perso(): #classe personnage
                 self.animactu=["def",0] #on update l'animation en cour
                 self.image=self.imgs[13] #on update l'image
     
-def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
+def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
+    fenx,feny,fentx,fenty=perso.fx,perso.fy,perso.ftx,perso.fty
     pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0) #on nettoie l'ecran en noir
     for o in objsmap: #on parcoure tous les objets qu'il y a sur la map et on les affiche
         if o.image != None and o.posX >= perso.cam[0] and o.posX <= perso.cam[0]+fentx and o.posY >= perso.cam[1] and o.posY <= perso.cam[1]+fenty: #si l'image de cette objet n'est pas nulle et si l'objet est dans l'ecran, on ne va pas afficher l'objet alors qu'on ne le voit pas ! #OPTIMISATION!
             fenetre.blit(o.image,[fenx+o.posX+perso.cam[0],feny+o.posY+perso.cam[1]]) #on affiche alors l'objet
-    for xx in range( int(-perso.cam[0]/t)-1 , int((-perso.cam[0]+fentx)/t)+1 ): #on parcour la map afin de l'afficher
-        for yy in range( int(-perso.cam[1]/t)-1 , int((-perso.cam[1]+fenty)/t)+1 ):  #on parcour la map afin de l'afficher
+    for xx in range( int(-perso.cam[0]/t) , int((-perso.cam[0]+fentx)/t) ): #on parcour la map afin de l'afficher
+        for yy in range( int(-perso.cam[1]/t) , int((-perso.cam[1]+fenty)/t) ):  #on parcour la map afin de l'afficher
             if xx >= 0 and xx < mape.shape[0]-1 and yy >= 0 and yy < mape.shape[1]-1: #si les coordonnées xx,yy sont dans la map  alors,
                 fenetre.blit(imgmape[mape[xx,yy]],[fenx+xx*t+perso.cam[0],feny+yy*t+perso.cam[1]]) #on affiche la case xx,yy de la map
     for p in prs: #on parcour tous les personnages
         if p!=None and p!=perso: #si le personnage existe et qu'il est différent du personnage de la fenetre
-            if p.posX+p.tx >= perso.cam[0] and p.posX-p.tx <= perso.cam[0]+fentx and p.posY+p.ty >= perso.cam[1] and p.posY-p.ty <= perso.cam[1]+fenty:
-                fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
-            elif p==perso: #si le personnage est le personnage de la fenetre
-                fenetre.blit(p.image,[fenx+p.posX+perso.cam[0],feny+p.posY+perso.cam[1]])
+            fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
+        elif p==perso: fenetre.blit(perso.image,[fenx+perso.cam[0]+perso.posX,feny+perso.cam[1]+perso.posY])
     for b in bonus:
         if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
             fenetre.blit(b.image,[fenx+perso.cam[0]+b.posX,feny+perso.cam[1]+b.posY])

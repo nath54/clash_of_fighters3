@@ -4,17 +4,6 @@ from lib import * #on import toutes les données du programme lib.py
 def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme jeu.py
     tm=75 #variable tm qui correspond au coté d'un case de la map
     tp=100 #variable tp qui correspond au à la taille des persos
-    prs=[None,None,None,None] #liste prs qui contient les personnages des joueurs
-    nbj=0  #variable nbj qui contient le nombre de joueurs
-    if p1!=None: prs[0],nbj=Perso(p1,100,100,tp),nbj+1 #si p1 est différent de None , alors l'élément 0 de la liste prs vaut le personnage du player 1 et nbj est incrémenté de 1
-    if p2!=None: prs[1],nbj=Perso(p2,200,200,tp),nbj+1 #si p2 est différent de None , alors l'élément 1 de la liste prs vaut le personnage du player 2 et nbj est incrémenté de 1
-    if p3!=None: prs[2],nbj=Perso(p3,100,300,tp),nbj+1 #si p3 est différent de None , alors l'élément 2 de la liste prs vaut le personnage du player 3 et nbj est incrémenté de 1
-    if p4!=None: prs[3],nbj=Perso(p4,400,400,tp),nbj+1 #si p4 est différent de None , alors l'élément 3 de la liste prs vaut le personnage du player 4 et nbj est incrémenté de 1
-    fens=[] #liste fens qui contient toutes les fenetres
-    if   nbj == 1 : fens = [ [0,0,tex,tey] ] #on crée les fenetres en fonction du nombre de joueurs
-    elif nbj == 2 : fens = [ [0,0,tex,int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
-    elif nbj == 3 : fens = [ [0,0,int(tex/2),int(tey/2)] , [int(tex/2),0,int(tex/2),int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
-    elif nbj == 4 : fens = [ [0,0,int(tex/2),int(tey/2)] , [0,0,int(tex/2),int(tey/2)] , [0,0,int(tex/2),int(tey/2)] , [int(tex/2),int(tey/2),int(tex/2),int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
     imgmape=[] #liste imgmape qui va contenir toutes les images de la mape préparées
     for m in emaps: #boucle qui parcour toutes les valeurs de la liste emaps
         imgmape.append(pygame.transform.scale(pygame.image.load(dim+m[2]),[tm,tm])) #on ajoute a imgmape une image préparée
@@ -24,25 +13,37 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme j
             mape[x,y]=random.randint(0,len(emaps)-1) #on assigne a la mape une valeur aléatoire
     objsmap=[] #liste qui contient tous les objets qui seront sur la map (ex:un arbre)
     bonus=[] #liste bonus qui contient tous les bonus qui seront sur la map (ex:du bouclier)
+    prs=[None,None,None,None] #liste prs qui contient les personnages des joueurs
+    nbj=0  #variable nbj qui contient le nombre de joueurs
+    if p1!=None: nbj=nbj+1 #si p1 est différent de None , alors nbj est incrémenté de 1
+    if p2!=None: nbj=nbj+1 #si p2 est différent de None , alors nbj est incrémenté de 1
+    if p3!=None: nbj=nbj+1 #si p3 est différent de None , alors nbj est incrémenté de 1
+    if p4!=None: nbj=nbj+1 #si p4 est différent de None , alors nbj est incrémenté de 1
+    fens=[] #liste fens qui contient toutes les fenetres
+    if   nbj == 1 : fens = [ [0,0,tex,tey] ] #on crée les fenetres en fonction du nombre de joueurs
+    elif nbj == 2 : fens = [ [0,0,tex,int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
+    elif nbj == 3 : fens = [ [0,0,int(tex/2),int(tey/2)] , [int(tex/2),0,int(tex/2),int(tey/2)] , [0,int(tey/2),tex,int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
+    elif nbj == 4 : fens = [ [0,0,int(tex/2),int(tey/2)] , [int(tex/2),0,int(tex/2),int(tey/2)] , [0,int(tey/2),int(tex/2),int(tey/2)] , [int(tex/2),int(tey/2),int(tex/2),int(tey/2)] ] #on crée les fenetres en fonction du nombre de joueurs
+    a=0  #variable a qui contient l'index de la liste des fenetres des joueurs
+    if p1!=None: prs[0],a=Perso(p1,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p1 est différent de None , alors l'élément 0 de la liste prs vaut le personnage du player 1 et a est incrémenté de 1
+    if p2!=None: prs[1],a=Perso(p2,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p2 est différent de None , alors l'élément 1 de la liste prs vaut le personnage du player 2 et a est incrémenté de 1
+    if p3!=None: prs[2],a=Perso(p3,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p3 est différent de None , alors l'élément 2 de la liste prs vaut le personnage du player 3 et a est incrémenté de 1
+    if p4!=None: prs[3],a=Perso(p4,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p4 est différent de None , alors l'élément 3 de la liste prs vaut le personnage du player 4 et a est incrémenté de 1
     encoure=True #variable encoure qui est vraie tant que le jeu tourne
     while encoure: #tant que encoure est vrai
         #affichage
         a=0 #initialisation de la variable a
         if p1!=None and prs[0]!=None: #si p1 est différent de None
-            fx,fy,ftx,fty=fens[a][0],fens[a][1],fens[a][2],fens[a][3] #variables fx,fy,ftx et fty qui correspondent à l'élément a de la liste fens
-            affichage_jeu_fen(fenetre,fx,fy,ftx,fty,mape,imgmape,objsmap,prs,prs[0],tm,bonus) #on affiche la fenetre du premier joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[0],tm,bonus) #on affiche la fenetre du premier joueur
             a=a+1 #on incrémente a de 1
         if p2!=None and prs[1]!=None: #si p2 est différent de None
-            fx,fy,ftx,fty=fens[a][0],fens[a][1],fens[a][2],fens[a][3] #variables fx,fy,ftx et fty qui correspondent à l'élément a de la liste fens
-            affichage_jeu_fen(fenetre,fx,fy,ftx,fty,mape,imgmape,objsmap,prs,prs[1],tm,bonus) #on affiche la fenetre du second joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[1],tm,bonus) #on affiche la fenetre du second joueur
             a=a+1 #on incrémente a de 1
         if p3!=None and prs[2]!=None: #si p3 est différent de None
-            fx,fy,ftx,fty=fens[a][0],fens[a][1],fens[a][2],fens[a][3] #variables fx,fy,ftx et fty qui correspondent à l'élément a de la liste fens
-            affichage_jeu_fen(fenetre,fx,fy,ftx,fty,mape,imgmape,objsmap,prs,prs[2],tm,bonus) #on affiche la fenetre du troisieme joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[2],tm,bonus) #on affiche la fenetre du troisieme joueur
             a=a+1 #on incrémente a de 1
         if p4!=None and prs[3]!=None: #si p4 est différent de None
-            fx,fy,ftx,fty=fens[a][0],fens[a][1],fens[a][2],fens[a][3] #variables fx,fy,ftx et fty qui correspondent à l'élément a de la liste fens
-            affichage_jeu_fen(fenetre,fx,fy,ftx,fty,mape,imgmape,objsmap,prs,prs[3],tm,bonus) #on affiche la fenetre du quatrieme joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[3],tm,bonus) #on affiche la fenetre du quatrieme joueur
         for event in pygame.event.get(): #boucle des evenements de pygame
             if event.type==QUIT: encoure=False #si il y a un événement QUITTER , encoure est faux
             elif event.type==KEYDOWN: #si il y a un événement KEYDOWN, alors:
