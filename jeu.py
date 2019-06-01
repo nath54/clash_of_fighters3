@@ -101,6 +101,10 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+        if p1tp==1: bot(prs[0],prs,objsmap,mape,tm) #si le perso 1 est un bot , alors le bot joue le perso 1
+        if p2tp==1: bot(prs[1],prs,objsmap,mape,tm) #si le perso 2 est un bot , alors le bot joue le perso 2
+        if p3tp==1: bot(prs[2],prs,objsmap,mape,tm) #si le perso 3 est un bot , alors le bot joue le perso 3
+        if p4tp==1: bot(prs[3],prs,objsmap,mape,tm) #si le perso 4 est un bot , alors le bot joue le perso 4
         for p in prs:
             if p!=None:
                 aa=False
@@ -109,7 +113,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                     if ht[1]>100:
                         try: del(p.hist_degats_texte[p.hist_degats_texte.index(ht)])
                         except: aa=True
-                while len(p.hist_degats_texte)>10: del(p.hist_degats_texte[0])
+                while len(p.hist_degats_texte)>=5: del(p.hist_degats_texte[0])
                 if aa: p.hist_degats_texte=[]
                 if p.vie>0 and time.time()-p.drdgts >= 10:
                     if p.bouclier<p.bouclier_total:
@@ -136,5 +140,11 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
         else: texte("Personne n'a gagné",400,400,40,(250,0,0))
     pygame.display.update()
     time.sleep(1)
-    
+
+
+
+
+
+
+
 

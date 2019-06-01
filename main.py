@@ -15,7 +15,7 @@ txts=[pretexte("The Clash of Fighters 3",50,(250,100,50)),pretexte("Keys :",25,(
 print(len(txts))
 
 clf=(64,121,204)
-def aff_menu(p1,p2,p3,p4,fps):
+def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     bts=[]
     for x in range(10): bts.append(None)
     fenetre.fill(clf)
@@ -36,6 +36,9 @@ def aff_menu(p1,p2,p3,p4,fps):
     if p1!=None:
         texte(persos[p1][0],150,180,20,(255,255,255))
         fenetre.blit(persos[p1][8],[rx(150),ry(230)])
+        bts[5]=button(150,510,75,35,(200,200,200),(0,0,0))
+        if p1tp==0: atexte(txts[47],160,520)
+        else: atexte(txts[48],160,520)
     atexte(txts[11],150,350)
     atexte(txts[12],150,365)
     atexte(txts[13],150,380)
@@ -50,6 +53,9 @@ def aff_menu(p1,p2,p3,p4,fps):
     if p2!=None:
         texte(persos[p2][0],300,180,20,(255,255,255))
         fenetre.blit(persos[p2][8],[rx(300),ry(230)])
+        bts[6]=button(300,510,75,35,(200,200,200),(0,0,0))
+        if p2tp==0: atexte(txts[47],310,520)
+        else: atexte(txts[48],310,520)
     atexte(txts[20],300,350)
     atexte(txts[21],300,365)
     atexte(txts[22],300,380)
@@ -64,6 +70,9 @@ def aff_menu(p1,p2,p3,p4,fps):
     if p3!=None:
         texte(persos[p3][0],450,180,20,(255,255,255))
         fenetre.blit(persos[p3][8],[rx(450),ry(230)])
+        bts[7]=button(450,510,75,35,(200,200,200),(0,0,0))
+        if p3tp==0: atexte(txts[47],460,520)
+        else: atexte(txts[48],460,520)
     atexte(txts[29],450,350)
     atexte(txts[30],450,365)
     atexte(txts[31],450,380)
@@ -78,6 +87,9 @@ def aff_menu(p1,p2,p3,p4,fps):
     if p4!=None:
         texte(persos[p4][0],600,180,20,(255,255,255))
         fenetre.blit(persos[p4][8],[rx(600),ry(230)])
+        bts[8]=button(600,510,75,35,(200,200,200),(0,0,0))
+        if p4tp==0: atexte(txts[47],610,520)
+        else: atexte(txts[48],610,520)
     atexte(txts[38],600,350)
     atexte(txts[39],600,365)
     atexte(txts[40],600,380)
@@ -110,12 +122,11 @@ def main():
     encour=True
     while encour:
         t1=time.time()
-        bts=aff_menu(p1,p2,p3,p4,fps)
+        bts=aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp)
         for event in pygame.event.get():
             if event.type==QUIT: encour=False
             elif event.type==KEYDOWN:
                 if event.key==K_ESCAPE: encour=False
-                print("event key ",event.key)
             elif event.type==MOUSEBUTTONDOWN:
                 pos=pygame.mouse.get_pos()
                 rpos=pygame.Rect(pos[0],pos[1],1,1)
@@ -140,6 +151,18 @@ def main():
                             else: p4=None
                         elif di==0 and (p1!=None or p2!=None or p3!=None or p4!=None):
                             jeu.main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp)
+                        elif di==5:
+                            if p1tp==0: p1tp=1
+                            else: p1tp=0
+                        elif di==6:
+                            if p2tp==0: p2tp=1
+                            else: p2tp=0
+                        elif di==7:
+                            if p3tp==0: p3tp=1
+                            else: p3tp=0
+                        elif di==8:
+                            if p4tp==0: p4tp=1
+                            else: p4tp=0
         t2=time.time()
         tt=t2-t1
         fps=int(1.0/float(tt))

@@ -7,7 +7,7 @@ dim="images/" #variable dim qui contient le chemin du dossier contenant toutes l
 
 pygame.init() #on initialise pygame
 
-btex,btey=1200,950 #variables btex et btey qui contiennent la taille originale de la fenetre de jeu
+btex,btey=1100,900 #variables btex et btey qui contiennent la taille originale de la fenetre de jeu
 btx,bty=1280,1024 #variables btx et bty qui contiennent la taille originale de l'écran sur lequel a été programmé le jeu
 
 io = pygame.display.Info() #on récurpère dans la variable io les infos sur l'affichage de l'utilisateur
@@ -143,6 +143,7 @@ class Perso(): #classe personnage
         self.tpef=time.time() #variable tpef qui indique le temps où le personnage a subit pour la derniere fois un effet(attaques)
         self.hist_degats_texte=[] #liste hist_degats_texte qui contient tous les textes qui sont affichés en haut à droite du personnage (ex : -50dg , esquive , bloqué)
         self.drdgts=time.time() #variable drdgts qui contient le temps où le personnage a encaissé des dégats pour la dernière fois
+        self.cible=None #variable cible contennant la cible du perso (NE SERT QUE POUR LES BOTS)
     def bouger(self,aa,objsmap,prs,mape,t): #fonction bouger du personnage qui permet au personnage de bouger, d'attaquer et de parer les coups de l'adversaire
         if aa=="Up": #bouger vers le haut
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
@@ -275,7 +276,6 @@ class Perso(): #classe personnage
                 self.datt2=time.time() #mise à jour de la variable (derniere fois attaque 2)
                 for p in prs: #boucle qui retourne tous les personages
                     if p!=None and  p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque2[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
-                        print("attaque")
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
                         if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
                             if p.bloquerattaque:
@@ -429,8 +429,41 @@ def aff_mini_mape(prs,mape,tm):
     if prs[2] != None: pygame.draw.rect(fenetre,(0,150,0),(  pf[0]+(prs[2].posX/(mape.shape[0]*tm)*pf[2]) , pf[1]+(prs[2].posY/(mape.shape[1]*tm)*pf[3]) , rx(3) , ry(3) ),0)
     if prs[3] != None: pygame.draw.rect(fenetre,(150,150,0),(  pf[0]+(prs[3].posX/(mape.shape[0]*tm)*pf[2]) , pf[1]+(prs[3].posY/(mape.shape[1]*tm)*pf[3]) , rx(3) , ry(3) ),0)
 
-
-
+def bot(perso,prs,objsmap,mape,t):
+    if perso.cible==None or perso.cible.vie==0:
+        aa=random.choice(prs)
+        nbr=0
+        while aa==None or aa==perso:
+            aa=random.choice(prs)
+            nbr+=1
+            if nbr>=100: break
+        perso.cible=aa
+    if perso.cible!=None:
+        if perso.cible.posX < perso.posX and abs(perso.posX-perso.cible.posX) > perso.vitesse :
+            perso.bouger("Left",objsmap,prs,mape,t)
+        if perso.cible.posX > perso.posX and abs(perso.posX-perso.cible.posX) > perso.vitesse:
+            perso.bouger("Right",objsmap,prs,mape,t)
+        if perso.cible.posY < perso.posY and abs(perso.posY-perso.cible.posY) > perso.vitesse:
+            perso.bouger("Up",objsmap,prs,mape,t)
+        if perso.cible.posY > perso.posY and abs(perso.posY-perso.cible.posY) > perso.vitesse:
+            perso.bouger("Down",objsmap,prs,mape,t)
+        dd=dist(perso.cible.posX,perso.cible.posY,perso.posX,perso.posY)
+        if random.randint(1,5)==1:
+            if dd < perso.attaque1[1]: perso.bouger("Att1",objsmap,prs,mape,t)
+        if random.randint(1,5)==1:
+            if dd < perso.attaque2[1]: perso.bouger("Att2",objsmap,prs,mape,t)
+        if random.randint(1,5)==1:
+            if dd < perso.attaque3[1]: perso.bouger("Att3",objsmap,prs,mape,t)
+        if random.randint(1,10)==1:
+            if dd < perso.cible.attaque1[1]: perso.bouger("Defence",objsmap,prs,mape,t)
+        if random.randint(1,10)==1:
+            if dd < perso.cible.attaque2[1]: perso.bouger("Defence",objsmap,prs,mape,t)
+        if random.randint(1,10)==1:
+            if dd < perso.cible.attaque3[1]: perso.bouger("Defence",objsmap,prs,mape,t)
+    else:
+        lst=["Left","Right","Up","Down","Att1","Att2","Att3","Defence"]
+        perso.bouger(random.choice(lst),objsmap,prs,mape,t)
+    
 
 
 
