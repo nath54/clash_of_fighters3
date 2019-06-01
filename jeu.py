@@ -53,7 +53,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
             if event.type==QUIT: encoure=False #si il y a un événement QUITTER , encoure est faux
             elif event.type==KEYDOWN: #si il y a un événement KEYDOWN, alors:
                 if event.key==K_ESCAPE: encoure=False #si le touche appuyée est échap, alors on quitte
-                if p1!=None: #si p1 est différent de None
+                if p1!=None and p1tp==0: #si p1 est différent de None
                     for k in p1keys: #boucle qui renvoie toutes les keys de p1keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
                             di,pp=p1keys.index(k),0 #di est égal à l'index de l'élément k de la liste p1keys et pp est égal à 0
@@ -65,7 +65,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
-                if p2!=None: #si p2 est différent de None
+                if p2!=None and p2tp==0: #si p2 est différent de None
                     for k in p2keys: #boucle qui renvoie toutes les keys de p2keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
                             di,pp=p2keys.index(k),1 #di est égal à l'index de l'élément k de la liste p2keys et pp est égal à 1
@@ -77,7 +77,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
-                if p3!=None: #si p3 est différent de None
+                if p3!=None and p3tp==0: #si p3 est différent de None
                     for k in p3keys: #boucle qui renvoie toutes les keys de p3keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
                             di,pp=p3keys.index(k),2 #di est égal à l'index de l'élément k de la liste p3keys et pp est égal à 2
@@ -89,7 +89,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
-                if p4!=None: #si p4 est différent de None
+                if p4!=None and p4tp==0: #si p4 est différent de None
                     for k in p4keys: #boucle qui renvoie toutes les keys de p4keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
                             di,pp=p4keys.index(k),3 #di est égal à l'index de l'élément k de la liste p4keys et pp est égal à 3
