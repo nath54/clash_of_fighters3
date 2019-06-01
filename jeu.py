@@ -1,7 +1,7 @@
 #coding:utf-8
 from lib import * #on import toutes les données du programme lib.py
 
-def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme jeu.py
+def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction main du programme jeu.py
     tm=75 #variable tm qui correspond au coté d'un case de la map
     tp=100 #variable tp qui correspond au à la taille des persos
     imgmape=[] #liste imgmape qui va contenir toutes les images de la mape préparées
