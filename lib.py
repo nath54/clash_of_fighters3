@@ -316,22 +316,22 @@ class Perso(): #classe personnage
                 self.animactu=["def",0] #on update l'animation en cour
                 self.image=self.imgs[13] #on update l'image
     
-def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t,bonus):
-    pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0)
-    for o in objsmap:
-        if o.image != None and o.posX >= perso.cam[0] and o.posX <= perso.cam[0]+fentx and o.posY >= perso.cam[1] and o.posY <= perso.cam[1]+fenty:
-            fenetre.blit(o.image,[o.posX+perso.cam[0],o.posY+perso.cam[1]])
-    for x in range( int(perso.cam[0]/t) , int((perso.cam[0]+fentx)/t) ):
-        for y in range( int(perso.cam[1]/t) , int((perso.cam[1]+fenty)/t) ):
-            if x >= 0 and x < mape.shape[0]-1 and y >= 0 and y < mape.shape[1]-1:
-                fenetre.blit(imgmape[mape[x,y]],[x*t+perso.cam[0],y*t+perso.cam[1]])
-    for p in prs:
-        if p!=None:
+def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
+    pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0) #on nettoie l'ecran en noir
+    for o in objsmap: #on parcoure tous les objets qu'il y a sur la map et on les affiche
+        if o.image != None and o.posX >= perso.cam[0] and o.posX <= perso.cam[0]+fentx and o.posY >= perso.cam[1] and o.posY <= perso.cam[1]+fenty: #si l'image de cette objet n'est pas nulle et si l'objet est dans l'ecran, on ne va pas afficher l'objet alors qu'on ne le voit pas ! #OPTIMISATION!
+            fenetre.blit(o.image,[fenx+o.posX+perso.cam[0],feny+o.posY+perso.cam[1]]) #on affiche alors l'objet
+    for xx in range( int(-perso.cam[0]/t) , int((-perso.cam[0]+fentx)/t) ): #on parcour la map afin de l'afficher
+        for yy in range( int(-perso.cam[1]/t) , int((-perso.cam[1]+fenty)/t) ):  #on parcour la map afin de l'afficher
+            if xx >= 0 and xx < mape.shape[0]-1 and yy >= 0 and yy < mape.shape[1]-1: #si les coordonnées xx,yy sont dans la map  alors,
+                fenetre.blit(imgmape[mape[xx,yy]],[fenx+xx*t+perso.cam[0],feny+yy*t+perso.cam[1]]) #on affiche la case xx,yy de la map
+    for p in prs: #on parcour tous les personnages
+        if p!=None: #si le personnage existe
             if p.posX+p.tx >= perso.cam[0] and p.posX-p.tx <= perso.cam[0]+fentx and p.posY+p.ty >= perso.cam[1] and p.posY-p.ty <= perso.cam[1]+fenty:
-                fenetre.blit(p.image,[perso.cam[0]+p.posX,perso.cam[1]+p.posY])
+                fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
     for b in bonus:
         if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
-            fenetre.blit(b.image,[perso.cam[0]+b.posX,perso.cam[1]+b.posY])
+            fenetre.blit(b.image,[fenx+perso.cam[0]+b.posX,feny+perso.cam[1]+b.posY])
     pygame.draw.rect(fenetre,(int(perso.vie/perso.vie_totale*255.0),0,0),(fenx+50,feny+15,int(perso.vie/perso.vie_totale*float(fentx-100.0)),35),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+15,int(fentx-100),35),2)
     pygame.draw.rect(fenetre,(0,0,int(perso.bouclier/perso.bouclier_total*255.0)),(fenx+50,feny+60,int(perso.vie/perso.vie_totale*float(fentx-100.0)),5),0)
