@@ -101,6 +101,15 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme j
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+        for p in prs:
+            if p!=None:
+                aa=False
+                for ht in p.hist_degats_texte:
+                    ht[1]+=1
+                    if ht[1]>100:
+                        try: del(p.hist_degats_texte[p.hist_degats_texte.index(ht)])
+                        except: aa=True
+                if aa: p.hist_degats_texte=[]
         nbev=0
         if prs[0]!=None and prs[0].vie>0: nbev+=1
         if prs[1]!=None and prs[1].vie>0: nbev+=1
@@ -120,6 +129,6 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys): #fonction main du programme j
         elif prs[3] != None and prs[3].vie>0: texte("Player 4 a gagné",400,400,40,(250,0,0))
         else: texte("Personne n'a gagné",400,400,40,(250,0,0))
     pygame.display.update()
-    time.sleep(2)
+    time.sleep(1)
     
 

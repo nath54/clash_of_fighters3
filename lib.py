@@ -37,7 +37,7 @@ emaps=[ ["herbe",True,"herbe.png"] , ["terre",True,"terre.png"] ]
 #liste persos qui contient toutes les données des personnages
 persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet",None],[20,70,0.7,[],5,"coup de poing",None],[250,250,50,[],50,"lasers dans le sol qui ressortent au niveau de l'ennemi",None],pygame.transform.scale(pygame.image.load(dim+"jarry.png"),[rx(100),ry(100)]) ]
           ,["bismak",2000,200,10,3,[50,100,1.2,[],15,"coup d'épée",None],[50,100,1.2,[],15,"coup d'épée",None],[200,150,45,[],75,"super coup d'épée",None],pygame.transform.scale(pygame.image.load(dim+"bismak.png"),[rx(100),ry(100)])]
-          #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
+          ,["fantom",500,50,30,95,[2,70,0.2,[],10,"griffes",None],[25,60,2,[],20,"morsure",None],[60,500,30,[],50,"cri strident",None],pygame.transform.scale(pygame.image.load(dim+"fantom.png"),[rx(100),ry(100)])]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
           #,["",0,0,0,0,[0,0,0,[],0,""],[0,0,0,[],0,""],[0,0,0,[],0,""]]
@@ -140,7 +140,8 @@ class Perso(): #classe personnage
         self.tpsbouger=0.01 #variable tpsbouger qui contient le temps que le personnage va mettre entre chaque mouvement
         self.dbouger=time.time() #variable dbouger qui contient le temps où le personnage a bougé pour la derniere fois
         self.bloquerattaque=False #variable bloquerattaque qui dit si le personnage est en train de bloquer les attaques ou pas
-        self.tpef=time.time()
+        self.tpef=time.time() #variable tpef qui indique le temps où le personnage a subit pour la derniere fois un effet(attaques)
+        self.hist_degats_texte=[] #liste hist_degats_texte qui contient tous les textes qui sont affichés en haut à droite du personnage (ex : -50dg , esquive , bloqué)
     def bouger(self,aa,objsmap,prs,mape,t): #fonction bouger du personnage qui permet au personnage de bouger, d'attaquer et de parer les coups de l'adversaire
         if aa=="Up": #bouger vers le haut
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
@@ -234,9 +235,11 @@ class Perso(): #classe personnage
                     if  p!=None and p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque1[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
                         if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            print("l'attaque est évitée") #on affiche "l'attaque est évitée" si le personnage attaqué à esquivé
+                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                            elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
-                            dgts=self.attaque1[1] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            dgts=self.attaque1[0] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
                                     p.bouclier-=dgts #on enlève au bouclier les dégats de l'attaque
@@ -268,9 +271,10 @@ class Perso(): #classe personnage
                         print("attaque")
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
                         if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            print("l'attaque est évitée") #on affiche "l'attaque est évitée" si le personnage attaqué à esquivé
+                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                            elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
-                            dgts=self.attaque2[1] #on assigne à la valeur dgts les dégats de l'attaque 2
+                            dgts=self.attaque2[0] #on assigne à la valeur dgts les dégats de l'attaque 2
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
                                     p.bouclier-=dgts #on enlève au bouclier les dégats de l'attaque
@@ -278,6 +282,7 @@ class Perso(): #classe personnage
                                 else: #si le bouclier du personnage
                                     dgts-=p.bouclier #une partie des dégats de l'attaque on étés absorbés par le bouclier du personnage attaqué
                                     p.bouclier=0 #le bouclier ne peux plus absorber de dégats
+                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque2[6]!=None: p.image_effet,p.tpef=[self.imgs[23],self.attaque2[6]],time.time()
@@ -301,9 +306,10 @@ class Perso(): #classe personnage
                     if p!=None and p!=self and p.vie>0 and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque3[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
                         if a<=p.esquive or p.bloquerattaque or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
-                            print("l'attaque est évitée") #on affiche "l'attaque est évitée" si le personnage attaqué à esquivé
+                            if p.bloquerattaque: p.hist_degats_texte.append( ["bloqué",0] )
+                            elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
                         else: #si le personnage attaqué n'a pas esquivé
-                            dgts=self.attaque3[1] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            dgts=self.attaque3[0] #on assigne à la valeur dgts les dégats de l'attaque 1
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
                                     p.bouclier-=dgts #on enlève au bouclier les dégats de l'attaque
@@ -311,6 +317,7 @@ class Perso(): #classe personnage
                                 else: #si le bouclier du personnage
                                     dgts-=p.bouclier #une partie des dégats de l'attaque on étés absorbés par le bouclier du personnage attaqué
                                     p.bouclier=0 #le bouclier ne peux plus absorber de dégats
+                            p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             p.vie-=dgts #on enlève à la vie du personnage attaqué les dégats restants
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque3[6]!=None: p.image_effet,p.tpef=[self.imgs[27],self.attaque3[6]],time.time()
@@ -362,6 +369,8 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
             if p.image_effet!=None:
                 fenetre.blit(p.image_effet[0],[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
                 if time.time()-p.tpef>=p.image_effet[1]: p.image_effet=None
+            for ht in p.hist_degats_texte:
+                texte(ht[0],fenx+perso.cam[0]+p.posX+p.tx,feny+perso.cam[1]+p.posY-ht[1],25,(255,0,0))
     for b in bonus:
         if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
             fenetre.blit(b.image,[fenx+perso.cam[0]+b.posX,feny+perso.cam[1]+b.posY])
