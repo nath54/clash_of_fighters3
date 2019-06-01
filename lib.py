@@ -348,7 +348,8 @@ class Perso(): #classe personnage
                 elif self.animactu[0]=="def" and self.animactu[1]==2: #on vérifie l'état de l'animation
                     self.animactu=["def",0] #on update l'animation en cour
                     self.image=self.imgs[13] #on update l'image
-    
+
+txtvem=pretexte("Vous etes mort !",35,(100,100,00))
 def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
     fenx,feny,fentx,fenty=perso.fx,perso.fy,perso.ftx,perso.fty
     pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0) #on nettoie l'ecran en noir
@@ -384,6 +385,8 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
     clbouclier=tuple(clbouclier)
     pygame.draw.rect(fenetre,clbouclier,(fenx+50,feny+60,int(perso.bouclier/perso.bouclier_total*float(fentx-100.0)),5),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),5),1)
+    if perso.vie<=0:
+        atexte(txtvem,[fenx+fentx/2,feny+fenty/2])
     pygame.display.update()
 
 
