@@ -23,12 +23,14 @@ def button(x,y,tx,ty,cl,clb): #fonction bouton qui retourne un bouton
     b=pygame.draw.rect(fenetre,cl,(rx(x),ry(y),rx(tx),ry(ty)),0) #crée dans la variable b le fond du bouton
     pygame.draw.rect(fenetre,clb,(rx(x),ry(y),rx(tx),ry(ty)),1) #dessine le contour du bouton
     return b #retourne la variable b contenant le fond du bouton qui est cliquable
+def pretexte(txt,t,cl): return pygame.font.SysFont("Serif",ry(t)).render(txt,t,cl) #fonction qui prépare le texte qui va être affiché
+def atexte(pretxt,x,y): fenetre.blit( pretxt , [rx(x),ry(y)]) #fonction qui affiche le texte déjà préparé
 def texte(txt,x,y,t,cl): fenetre.blit( pygame.font.SysFont("Serif",ry(t)).render(txt,t,cl) , [rx(x),ry(y)]) #fonction texte qui écrit un texte à l'ecran
 def dist(x1,y1,x2,y2): return int(math.square(math.pow(x1-x2,2)+math.pow(y1-y2,2))) #fonction dist qui retourne la distance entre deoux points
 
 #liste emaps qui contient toutes les données des éléments de la mape
 
-emaps=[ ["herbe",True,"herbe.png"] ]
+emaps=[ ["herbe",True,"herbe.png"] , ["terre",True,"terre.png"] ]
 #0=nom , 1=pmd
 
 #liste persos qui contient toutes les données des personnages
@@ -91,6 +93,13 @@ def isobstacle(x1,y1,x2,y2,lo): #fonction isobstacle qui retourne si il y a un o
         if d.colliderect(o.rect): c=True #si le rect d rentre en collision avec un obstacle, la variable c est vraie
     return c #on retourne la variable c qui contient si il y a un obstacle ou pas
 
+def peutbouger(perso,objsmap):
+    r=pygame.Rect(perso.posX,perso.posY,perso.tx,perso.ty)
+    c=True
+    for o in objsmap:
+        if r.colliderect(o.rect): c=False
+    return c
+
 class Perso(): #classe personnage
     def __init__(self,p,x,y,t): #fonction initialisation du personnage
         self.nom=persos[p][0] #variable nom qui contient le nom du personnage
@@ -127,9 +136,9 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.py-=self.vitesse #on bouge le personnage
+                self.posY-=self.vitesse #on bouge le personnage
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.py+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posY+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                 if self.animactu==None or self.animactu[0]!="haut": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le haut)
                     self.animactu=["haut",0] #on update l'animation en cour
                     self.image=self.imgs[1] #on update l'image
@@ -146,9 +155,9 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.py+=self.vitesse #on bouge le personnage
+                self.posY+=self.vitesse #on bouge le personnage
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.py-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posY-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                 if self.animactu==None or self.animactu[0]!="bas": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le bas)
                     self.animactu=["bas",0] #on update l'animation en cour
                     self.image=self.imgs[4] #on update l'image
@@ -165,9 +174,9 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.py+=self.vitesse #on bouge le personnage
+                self.posX-=self.vitesse #on bouge le personnage
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.py-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posX+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                 if self.animactu==None or self.animactu[0]!="gauche": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la gauche)
                     self.animactu=["gauche",0] #on update l'animation en cour
                     self.image=self.imgs[7] #on update l'image
@@ -184,9 +193,9 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.px+=self.vitesse #on bouge le personnage
+                self.posX+=self.vitesse #on bouge le personnage
                 if not peutbouger(self,objsmap): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.px-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.posX-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
                 if self.animactu==None or self.animactu[0]!="droite": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la droite)
                     self.animactu=["droite",0] #on update l'animation en cour
                     self.image=self.imgs[10] #on update l'image
@@ -317,14 +326,15 @@ def affichage_jeu_fen(fenetre,fenx,feny,fentx,fenty,mape,imgmape,objsmap,prs,per
             if x >= 0 and x < mape.shape[0]-1 and y >= 0 and y < mape.shape[1]-1:
                 fenetre.blit(imgmape[mape[x,y]],[x*t+perso.cam[0],y*t+perso.cam[1]])
     for p in prs:
-        if p.posX+p.tx >= perso.cam[0] and p.posX-p.tx <= perso.cam[0]+fentx and p.posY+p.ty >= perso.cam[1] and p.posY-p.ty <= perso.cam[1]+fenty:
-            fenetre.blit(p.image,[perso.cam[0]+p.posX,perso.cam[1]+p.posY])
+        if p!=None:
+            if p.posX+p.tx >= perso.cam[0] and p.posX-p.tx <= perso.cam[0]+fentx and p.posY+p.ty >= perso.cam[1] and p.posY-p.ty <= perso.cam[1]+fenty:
+                fenetre.blit(p.image,[perso.cam[0]+p.posX,perso.cam[1]+p.posY])
     for b in bonus:
         if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
             fenetre.blit(b.image,[perso.cam[0]+b.posX,perso.cam[1]+b.posY])
     pygame.draw.rect(fenetre,(int(perso.vie/perso.vie_totale*255.0),0,0),(fenx+50,feny+15,int(perso.vie/perso.vie_totale*float(fentx-100.0)),35),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+15,int(fentx-100),35),2)
-    pygame.draw.rect(fenetre,(0,0,int(perso.perso.bouclier/perso.bouclier_total*255.0)),(fenx+50,feny+60,int(perso.vie/perso.vie_totale*float(fentx-100.0)),5),0)
+    pygame.draw.rect(fenetre,(0,0,int(perso.bouclier/perso.bouclier_total*255.0)),(fenx+50,feny+60,int(perso.vie/perso.vie_totale*float(fentx-100.0)),5),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),5),1)
     pygame.display.update()
 
