@@ -10,9 +10,7 @@ txts=[pretexte("The Clash of Fighters 3",50,(250,100,50)),pretexte("Keys :",25,(
       pretexte("v",17,(0,0,0)),pretexte("r",17,(0,0,0)),pretexte("Player 3 : ",20,(255,255,255)),pretexte("i",17,(0,0,0)),pretexte("k",17,(0,0,0)),pretexte("j",17,(0,0,0)),pretexte("l",17,(0,0,0)),
       pretexte("y",17,(0,0,0)),pretexte("u",17,(0,0,0)),pretexte("g",17,(0,0,0)),pretexte("h",17,(0,0,0)),pretexte("Player 4 :",20,(255,255,255)),
       pretexte("KP8",17,(0,0,0)),pretexte("KP2",17,(0,0,0)),pretexte("KP4",17,(0,0,0)),pretexte("KP6",17,(0,0,0)),pretexte("KP0",17,(0,0,0)),pretexte("KP .",17,(0,0,0)),pretexte("KP ENTER",17,(0,0,0)),pretexte("KP PLUS",17,(0,0,0)),
-      pretexte("Play ! ",25,(0,0,0)),pretexte("humain",20,(0,0,0)),pretexte("bot",20,(0,0,0))]
-
-print(len(txts))
+      pretexte("Play ! ",25,(0,0,0)),pretexte("humain",20,(0,0,0)),pretexte("bot",20,(0,0,0)),pretexte("special",17,(0,0,0)),pretexte("home",17,(0,0,0)),pretexte("t",17,(0,0,0)),pretexte("o",17,(0,0,0)),pretexte("KP 1",17,(0,0,0)),]
 
 clf=(64,121,204)
 def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
@@ -30,6 +28,7 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     atexte(txts[7],25,425)
     atexte(txts[8],25,440)
     atexte(txts[9],25,455)
+    atexte(txts[49],25,470)
     #player 1
     atexte(txts[10],150,150)
     bts[1]=button(150,230,100,100,(100,100,100),(0,0,0))
@@ -47,6 +46,7 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     atexte(txts[16],150,425)
     atexte(txts[17],150,440)
     atexte(txts[18],150,455)
+    atexte(txts[50],150,470)
     #player 2
     atexte(txts[19],300,150)
     bts[2]=button(300,230,100,100,(100,100,100),(0,0,0))
@@ -64,6 +64,7 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     atexte(txts[25],300,425)
     atexte(txts[26],300,440)
     atexte(txts[27],300,455)
+    atexte(txts[51],300,470)
     #player 3
     atexte(txts[28],450,150)
     bts[3]=button(450,230,100,100,(100,100,100),(0,0,0))
@@ -81,6 +82,7 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     atexte(txts[34],450,425)
     atexte(txts[35],450,440)
     atexte(txts[36],450,455)
+    atexte(txts[52],450,470)
     #player 4
     atexte(txts[37],600,150)
     bts[4]=button(600,230,100,100,(100,100,100),(0,0,0))
@@ -98,6 +100,7 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     atexte(txts[43],600,425)
     atexte(txts[44],600,440)
     atexte(txts[45],600,455)
+    atexte(txts[53],600,470)
     #
     bts[0]=button(350,650,200,100,(150,150,0),(0,0,0))
     atexte(txts[46],400,675)
@@ -110,10 +113,10 @@ def main():
     p2=None
     p3=None
     p4=None
-    p1keys=[K_UP,K_DOWN,K_LEFT,K_RIGHT,127,K_END,281,280]
-    p2keys=[K_e,K_d,K_s,K_f,K_x,K_c,K_v,K_r]
-    p3keys=[K_i,K_k,K_j,K_l,K_y,K_u,K_g,K_h]
-    p4keys=[K_KP8,K_KP2,K_KP4,K_KP6,K_KP0,K_KP_PERIOD,K_KP_ENTER,K_KP_PLUS]
+    p1keys=[K_UP,K_DOWN,K_LEFT,K_RIGHT,127,K_END,281,280,K_HOME]
+    p2keys=[K_e,K_d,K_s,K_f,K_x,K_c,K_v,K_r,K_t]
+    p3keys=[K_i,K_k,K_j,K_l,K_y,K_u,K_g,K_h,K_o]
+    p4keys=[K_KP8,K_KP2,K_KP4,K_KP6,K_KP0,K_KP_PERIOD,K_KP_ENTER,K_KP_PLUS,K_KP1]
     p1tp=0
     p2tp=0
     p3tp=0

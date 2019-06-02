@@ -65,6 +65,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+                            elif di==8: prs[pp].bouger("Special",objsmap,prs,mape,tm) #si di est égal à 8 , alors le personnage va faire son spécial
                 if p2!=None and p2tp==0: #si p2 est différent de None
                     for k in p2keys: #boucle qui renvoie toutes les keys de p2keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
@@ -77,6 +78,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+                            elif di==8: prs[pp].bouger("Special",objsmap,prs,mape,tm) #si di est égal à 8 , alors le personnage va faire son spécial
                 if p3!=None and p3tp==0: #si p3 est différent de None
                     for k in p3keys: #boucle qui renvoie toutes les keys de p3keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
@@ -89,6 +91,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+                            elif di==8: prs[pp].bouger("Special",objsmap,prs,mape,tm) #si di est égal à 8 , alors le personnage va faire son spécial
                 if p4!=None and p4tp==0: #si p4 est différent de None
                     for k in p4keys: #boucle qui renvoie toutes les keys de p4keys dans k
                         if event.key==k: #si la touche appuyée est égale à k
@@ -101,6 +104,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                             elif di==5: prs[pp].bouger("Att2",objsmap,prs,mape,tm) #si di est égal à 5 , alors le personnage va attaquer avec l'attaque 2
                             elif di==6: prs[pp].bouger("Att3",objsmap,prs,mape,tm) #si di est égal à 6 , alors le personnage va attaquer avec l'attaque 3
                             elif di==7: prs[pp].bouger("Defence",objsmap,prs,mape,tm) #si di est égal à 7 , alors le personnage va se défendre
+                            elif di==8: prs[pp].bouger("Special",objsmap,prs,mape,tm) #si di est égal à 8 , alors le personnage va faire son spécial
         if p1tp==1: bot(prs[0],prs,objsmap,mape,tm) #si le perso 1 est un bot , alors le bot joue le perso 1
         if p2tp==1: bot(prs[1],prs,objsmap,mape,tm) #si le perso 2 est un bot , alors le bot joue le perso 2
         if p3tp==1: bot(prs[2],prs,objsmap,mape,tm) #si le perso 3 est un bot , alors le bot joue le perso 3
@@ -114,6 +118,13 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                         try: del(p.hist_degats_texte[p.hist_degats_texte.index(ht)])
                         except: aa=True
                 while len(p.hist_degats_texte)>=5: del(p.hist_degats_texte[0])
+                if aa: p.hist_degats_texte=[]
+                for ht in p.hist_bonus_texte:
+                    ht[1]+=1
+                    if ht[1]>100:
+                        try: del(p.hist_bonus_texte[p.hist_bonus_texte.index(ht)])
+                        except: aa=True
+                while len(p.hist_bonus_texte)>=3: del(p.hist_bonus_texte[0])
                 if aa: p.hist_degats_texte=[]
                 if p.vie>0 and time.time()-p.drdgts >= 10:
                     if p.bouclier<p.bouclier_total:
