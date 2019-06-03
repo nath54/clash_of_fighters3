@@ -60,6 +60,12 @@ persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet",None],[20,7
 #attaque : 0=degats , 1=portee(pixels) , 2=temps (sec) , 3=effets , 4=%coup critique(x2 dégats) , 5=description , 6=image effet
 #special : 0=description , 1=id , 2=effet , 3=temps
 
+bonus=[ ["bouclier1","bouclier+",50,]
+       ,[]
+      ]
+
+#0=nom , 1=effet , 2=valeur effet , 3=image
+
 def loadimgprs(nom,t): #fonction loadimgprs qui va retourner une liste avec toutes les images du personnage avec son nom et la taille des images
     lst=[] #initialisation de la liste lst
     lst.append(pygame.transform.scale(pygame.image.load(dim+nom+".png"),[t,t])) #on ajoute l'image nom+".png" à la liste
@@ -515,13 +521,24 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
     for o in objsmap: #on parcoure tous les objets qu'il y a sur la map et on les affiche
         if o.image != None and o.posX >= perso.cam[0] and o.posX <= perso.cam[0]+fentx and o.posY >= perso.cam[1] and o.posY <= perso.cam[1]+fenty: #si l'image de cette objet n'est pas nulle et si l'objet est dans l'ecran, on ne va pas afficher l'objet alors qu'on ne le voit pas ! #OPTIMISATION!
             fenetre.blit(o.image,[fenx+o.posX+perso.cam[0],feny+o.posY+perso.cam[1]]) #on affiche alors l'objet
-    for xx in range( int(-perso.cam[0]/t) , int((-perso.cam[0]+fentx)/t) ): #on parcour la map afin de l'afficher
-        for yy in range( int(-perso.cam[1]/t) , int((-perso.cam[1]+fenty)/t) ):  #on parcour la map afin de l'afficher
-            if xx >= 0 and xx < mape.shape[0]-1 and yy >= 0 and yy < mape.shape[1]-1: #si les coordonnées xx,yy sont dans la map  alors,
-                xxx=perso.cam[0]+xx*t
-                yyy=perso.cam[1]+yy*t
-                if xxx >= 0 and xxx <= fentx and yyy >= 0 and yyy <= fenty: #si elle est completement dans l'écran
-                    fenetre.blit(imgmape[mape[xx,yy]],[fenx+xxx,feny+yyy]) #on affiche la case xx,yy de la map
+    for x in range( int(-perso.cam[0]/t) , int((-perso.cam[0]+fentx)/t) ): #on parcour la map afin de l'afficher
+        for y in range( int(-perso.cam[1]/t) , int((-perso.cam[1]+fenty)/t) ):  #on parcour la map afin de l'afficher
+            if x >= 0 and x < mape.shape[0]-1 and y >= 0 and y < mape.shape[1]-1: #si les coordonnées xx,yy sont dans la map  alors,
+                xx=perso.cam[0]+x*t
+                yy=perso.cam[1]+y*t
+                if xx >= 0 and xx+t <= fentx and yy >= 0 and yy+t <= fenty: #si elle est completement dans l'écran
+                    fenetre.blit(imgmape[mape[x,y]],[fenx+xx,feny+yy]) #on affiche la case xx,yy de la map
+                """
+                elif ( xx+t>0 or xx<fentx ) or ( yy+t>0 or yy<fenty ):
+                    if xx+t>0: xxx,ax,txx=0,-xx,t-1
+                    elif xx<tex: xxx,ax,txx=xx,0,tex-xx
+                    else: xxx,ax,txx=xx,0,t-1
+                    if yy+t>0: yyy,ay,tyy=0,-yy,t-1
+                    elif yy<tey: yyy,ay,tyy=yy,0,tey-yy
+                    else: yyy,ay,tyy=yy,0,t-1
+                    img=imgmape[mape[x,y]].subsurface(pygame.Rect(ax,ay,txx,tyy))
+                    fenetre.blit(img,[xxx,yyy])
+                    """
     for p in prs: #on parcour tous les personnages
         if p!=None and (p.posX+perso.cam[0]>=0 and p.posX+perso.cam[0]<=fentx and p.posY+perso.cam[1]>=0 and p.posY+perso.cam[1]<=fenty): #si le personnage existe et qu'il est différent du personnage de la fenetre
             fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
