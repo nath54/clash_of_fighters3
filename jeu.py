@@ -173,7 +173,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
         fps=int(1.0/float(t2-t1))
         texte("fps : "+str(fps),15,15,15,(255,255,255))
         pygame.display.update()
-    fenetre.fill((0,100,0))
+    button(300,300,500,150,(200,200,50),(0,0,0))
     if nbev<=1:
         if prs[0] != None and prs[0].vie>0: texte("Player 1 a gagné",400,400,40,(250,0,0))
         elif prs[1] != None and prs[1].vie>0: texte("Player 2 a gagné",400,400,40,(250,0,0))

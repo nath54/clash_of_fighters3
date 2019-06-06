@@ -294,7 +294,7 @@ class Perso(): #classe personnage
                 for p in prs: #boucle qui retourne tous les personages
                     if  p!=None and p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque1[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap) and not "invincible" in p.etat: #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
                             if p.bloquerattaque:
                                 p.hist_degats_texte.append( ["bloqué",0] )
                                 p.bouclier-=1
@@ -302,8 +302,10 @@ class Perso(): #classe personnage
                                 p.bloquerattaque=False
                                 p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
+                            elif "invincible" in p.etat: p.hist_degats_texte.append( ["invincible",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque1[0] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            if "affaibli" in p.etat: dgts*=1.5
                             p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
@@ -347,7 +349,7 @@ class Perso(): #classe personnage
                 for p in prs: #boucle qui retourne tous les personages
                     if p!=None and  p!=self and p.vie>0  and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque2[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap) and not "invincible" in p.etat: #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
                             if p.bloquerattaque:
                                 p.hist_degats_texte.append( ["bloqué",0] )
                                 p.bouclier-=1
@@ -355,8 +357,10 @@ class Perso(): #classe personnage
                                 p.bloquerattaque=False
                                 p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
+                            elif "invincible" in p.etat: p.hist_degats_texte.append( ["invincible",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque2[0] #on assigne à la valeur dgts les dégats de l'attaque 2
+                            if "affaibli" in p.etat: dgts*=1.5
                             p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
@@ -400,7 +404,7 @@ class Perso(): #classe personnage
                 for p in prs: #boucle qui retourne tous les personages
                     if p!=None and p!=self and p.vie>0 and dist(p.posX,p.posY,self.posX,self.posY) <= self.attaque3[1]: #on vérifie que le personnage n'est pas celui qui attaque et que la distance entre les deux persos est inférieure à la portée de l'attaque
                         a=random.randint(0,100) #on prend un chiffre aléatoire entre 0 et 100
-                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap): #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
+                        if a<=p.esquive or ( p.bloquerattaque and p.bouclier > 0 ) or isobstacle(p.posX,p.posY,self.posX,self.posY,objsmap) and not "invincible" in p.etat: #on vérifie si le le personnage attaqué a esquivé ou n'est pas en train de bloquer l'attaque ou qu'il n'y ait pas d'obstacle entre les personnages
                             if p.bloquerattaque:
                                 p.hist_degats_texte.append( ["bloqué",0] )
                                 p.bouclier-=1
@@ -408,8 +412,10 @@ class Perso(): #classe personnage
                                 p.bloquerattaque=False
                                 p.image=p.imgs[0]
                             elif a<=p.esquive: p.hist_degats_texte.append( ["esquivé",0])
+                            elif "invincible" in p.etat: p.hist_degats_texte.append( ["invincible",0])
                         else: #si le personnage attaqué n'a pas esquivé
                             dgts=self.attaque3[0] #on assigne à la valeur dgts les dégats de l'attaque 1
+                            if "affaibli" in p.etat: dgts*=1.5
                             p.hist_degats_texte.append( ["-"+str(dgts)+"dg",0] )
                             if p.bouclier > 0: #on vérifie si le bouclier du personnage attaqué est supérieur à zéro
                                 if p.bouclier >= dgts: #on vérifie si le bouclier du personnage attaqué est supérieur ou égal au dégats de l'attaque
@@ -728,9 +734,12 @@ def bot(perso,prs,objsmap,mape,t):
             nbr+=1
             if nbr>=100: break
         perso.cible=aa
-    if perso.cible!=None:
+    if perso.cible!=None or not "invisible" in perso.cible.etat:
         rb=2
         fb=20
+        if "brouillard" in perso.etat:
+            rb*=2
+            fb*=2
         if random.randint(1,rb)==1:
             if perso.cible.posX < perso.posX and abs(perso.posX-perso.cible.posX) > perso.vitesse : perso.bouger("Left",objsmap,prs,mape,t)
         if random.randint(1,rb)==1:
