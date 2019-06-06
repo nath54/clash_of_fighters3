@@ -60,11 +60,31 @@ persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet",None],[20,7
 #attaque : 0=degats , 1=portee(pixels) , 2=temps (sec) , 3=effets , 4=%coup critique(x2 dégats) , 5=description , 6=image effet
 #special : 0=description , 1=id , 2=effet , 3=temps
 
-bonus=[ ["bouclier1","bouclier+",50,]
-       ,[]
+bonus=[ ["bouclier1","bouclier+",50,pygame.transform.scale(pygame.image.load("images/bouclier1.png")                    ,[rx(50),ry(50)]),10]
+       ,["bouclier1","bouclier+",100,pygame.transform.scale(pygame.image.load("images/bouclier2.png")                   ,[rx(50),ry(50)]),5]
+       ,["bouclier1","bouclier++",1,pygame.transform.scale(pygame.image.load("images/bouclier3.png")                    ,[rx(50),ry(50)]),1]
+       ,["vie1","vie+",50,pygame.transform.scale(pygame.image.load("images/vie1.png")                                   ,[rx(50),ry(50)]),3]
+       ,["vie2","vie+",100,pygame.transform.scale(pygame.image.load("images/vie2.png")                                  ,[rx(50),ry(50)]),2]
+       ,["vie3","vie++",1,pygame.transform.scale(pygame.image.load("images/vie3.png")                                   ,[rx(50),ry(50)]),1]
+       ,["+att dégats1","att_degats+",3,pygame.transform.scale(pygame.image.load("images/att_degats1.png")              ,[rx(50),ry(50)]),6]
+       ,["+att dégats2","att_degats+",10,pygame.transform.scale(pygame.image.load("images/att_degats2.png")             ,[rx(50),ry(50)]),2]
+       ,["+vitesse1","vitesse+",1,pygame.transform.scale(pygame.image.load("images/vitesse1.png")                       ,[rx(50),ry(50)]),4]
+       ,["+vitesse2","vitesse+",3,pygame.transform.scale(pygame.image.load("images/vitesse2.png")                       ,[rx(50),ry(50)]),2]
+       ,["portail magique","teletransportation",1,pygame.transform.scale(pygame.image.load("images/portail.png")        ,[rx(50),ry(50)]),10]
+       ,["cape invisibilite","invisibilite",15,pygame.transform.scale(pygame.image.load("images/cape.png")              ,[rx(50),ry(50)]),3]
+       ,["potion invincibilite","invincibilite",10,pygame.transform.scale(pygame.image.load("images/pot_invinc.png")    ,[rx(50),ry(50)]),5]
+       ,["potion affaiblissement","affaiblissement",10,pygame.transform.scale(pygame.image.load("images/pot_aff.png")   ,[rx(50),ry(50)]),10]
+       ,["grappin","teletransportation_to_ennemi",1,pygame.transform.scale(pygame.image.load("images/grappin.png")      ,[rx(50),ry(50)]),10]
+       ,["brouillard de guerre","brouillard",7.5,pygame.transform.scale(pygame.image.load("images/brouillard.png")      ,[rx(50),ry(50)]),10]
+       ,["potion de degats","-degats",25,pygame.transform.scale(pygame.image.load("images/pot_degats.png")              ,[rx(50),ry(50)]),10]
+       ,["potion d'agilité","esquive+",2,pygame.transform.scale(pygame.image.load("images/pot_agil.png")                ,[rx(50),ry(50)]),6]
       ]
 
-#0=nom , 1=effet , 2=valeur effet , 3=image
+bns=[]
+for b in bonus:
+    for x in range(b[4]): bns.append(b)
+
+#0=nom , 1=effet , 2=valeur effet , 3=image , 4=probabilite
 
 def loadimgprs(nom,t): #fonction loadimgprs qui va retourner une liste avec toutes les images du personnage avec son nom et la taille des images
     lst=[] #initialisation de la liste lst
@@ -166,16 +186,22 @@ class Perso(): #classe personnage
         self.hist_bonus_texte=[] #liste hist_bonus_texte qui contient tous les textes qui sont affichés en haut à gauche du personnage ( ex : +50 pv , +50bc )
         self.drdgts=time.time() #variable drdgts qui contient le temps où le personnage a encaissé des dégats pour la dernière fois
         self.cible=None #variable cible contennant la cible du perso (NE SERT QUE POUR LES BOTS)
+        self.etat=[]
+        self.tpsrestant_etat=[]
+        self.dtpsetat=time.time()
     def bouger(self,aa,objsmap,prs,mape,t): #fonction bouger du personnage qui permet au personnage de bouger, d'attaquer et de parer les coups de l'adversaire
         if aa=="Up": #bouger vers le haut
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posY-=self.vitesse #on bouge le personnage
-                self.cam[1]+=self.vitesse #on bouge la camera
+                vit=self.vitesse
+                if "ralentit" in self.etat: vit=int(vit/2)
+                if "rapide" in self.etat: vit*=2
+                self.posY-=vit #on bouge le personnage
+                self.cam[1]+=vit #on bouge la camera
                 if not peutbouger(self,objsmap,mape,t): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posY+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
-                    self.cam[1]-=self.vitesse+1 #on bouge la camera
+                    self.posY+=vit+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.cam[1]-=vit+1 #on bouge la camera
             if self.animactu==None or self.animactu[0]!="haut": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le haut)
                 self.animactu=["haut",0] #on update l'animation en cour
                 self.image=self.imgs[1] #on update l'image
@@ -192,11 +218,14 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posY+=self.vitesse #on bouge le personnage
-                self.cam[1]-=self.vitesse #on bouge la camera
+                vit=self.vitesse
+                if "ralentit" in self.etat: vit=int(vit/2)
+                if "rapide" in self.etat: vit*=2
+                self.posY+=vit #on bouge le personnage
+                self.cam[1]-=vit #on bouge la camera
                 if not peutbouger(self,objsmap,mape,t): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posY-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
-                    self.cam[1]+=self.vitesse+1 #on bouge la camera
+                    self.posY-=vit+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.cam[1]+=vit+1 #on bouge la camera
             if self.animactu==None or self.animactu[0]!="bas": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers le bas)
                 self.animactu=["bas",0] #on update l'animation en cour
                 self.image=self.imgs[4] #on update l'image
@@ -213,11 +242,14 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posX-=self.vitesse #on bouge le personnage
-                self.cam[0]+=self.vitesse #on bouge la camera
+                vit=self.vitesse
+                if "ralentit" in self.etat: vit=int(vit/2)
+                if "rapide" in self.etat: vit*=2
+                self.posX-=vit #on bouge le personnage
+                self.cam[0]+=vit #on bouge la camera
                 if not peutbouger(self,objsmap,mape,t): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posX+=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
-                    self.cam[0]-=self.vitesse+1 #on bouge la camera
+                    self.posX+=vit+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.cam[0]-=vit+1 #on bouge la camera
             if self.animactu==None or self.animactu[0]!="gauche": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la gauche)
                 self.animactu=["gauche",0] #on update l'animation en cour
                 self.image=self.imgs[7] #on update l'image
@@ -234,11 +266,14 @@ class Perso(): #classe personnage
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.dbouger=time.time() #mise à jour de la variable (derniere fois bouger)
-                self.posX+=self.vitesse #on bouge le personnage
-                self.cam[0]-=self.vitesse #on bouge la camera
+                vit=self.vitesse
+                if "ralentit" in self.etat: vit=int(vit/2)
+                if "rapide" in self.etat: vit*=2
+                self.posX+=vit #on bouge le personnage
+                self.cam[0]-=vit #on bouge la camera
                 if not peutbouger(self,objsmap,mape,t): #on vérifie si le perso peut bouger (collisions avec les objets de la map)
-                    self.posX-=self.vitesse+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
-                    self.cam[0]+=self.vitesse+1 #on bouge la camera
+                    self.posX-=vit+1 #si le perso rentre en collision avec un autre objet de la map, il rebondit
+                    self.cam[0]+=vit+1 #on bouge la camera
             if self.animactu==None or self.animactu[0]!="droite": #si il n'y a pas d'animation ou une différente de l'animation (bouger vers la droite)
                 self.animactu=["droite",0] #on update l'animation en cour
                 self.image=self.imgs[10] #on update l'image
@@ -252,6 +287,7 @@ class Perso(): #classe personnage
                 self.animactu=["droite",0] #on update l'animation en cour
                 self.image=self.imgs[10] #on update l'image
         elif aa=="Att1": #Attaque 1
+            attres=False
             if time.time()-self.datt1 >= self.attaque1[2] and self.vie>0: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a attaqué avec l'attaque 1 et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.datt1=time.time() #mise à jour de la variable (derniere fois attaque 1)
@@ -290,6 +326,7 @@ class Perso(): #classe personnage
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque1[6]!=None: p.image_effet,p.tpef=[self.imgs[19],self.attaque1[6]],time.time()
                             p.drdgts=time.time()
+                            attres=True
             if self.animactu==None or self.animactu[0]!="att1": #si il n'y a pas d'animation ou une différente de l'animation (attaque 1)
                 self.animactu=["att1",0] #on update l'animation en cour
                 self.image=self.imgs[16] #on update l'image
@@ -299,10 +336,11 @@ class Perso(): #classe personnage
             elif self.animactu[0]=="att1" and self.animactu[1]==1: #on vérifie l'état de l'animation
                 self.animactu=["att1",2] #on update l'animation en cour
                 self.image=self.imgs[18] #on update l'image
-            elif self.animactu[0]=="att1" and self.animactu[1]==2: #on vérifie l'état de l'animation
+            elif self.animactu[0]=="att1" and self.animactu[1]==2 and attres: #on vérifie l'état de l'animation
                 self.animactu=["att1",0] #on update l'animation en cour
                 self.image=self.imgs[16] #on update l'image
         elif aa=="Att2": #Attaque 2
+            attres=False
             if time.time()-self.datt2 >= self.attaque2[2] and self.vie>0: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a attaqué avec l'attaque 2 et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.datt2=time.time() #mise à jour de la variable (derniere fois attaque 2)
@@ -341,6 +379,7 @@ class Perso(): #classe personnage
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque2[6]!=None: p.image_effet,p.tpef=[self.imgs[23],self.attaque2[6]],time.time()
                             p.drdgts=time.time()
+                            attres=True
             if self.animactu==None or self.animactu[0]!="att2": #si il n'y a pas d'animation ou une différente de l'animation (attaque 2)
                 self.animactu=["att2",0] #on update l'animation en cour
                 self.image=self.imgs[20] #on update l'image
@@ -350,10 +389,11 @@ class Perso(): #classe personnage
             elif self.animactu[0]=="att2" and self.animactu[1]==1: #on vérifie l'état de l'animation
                 self.animactu=["att2",2] #on update l'animation en cour
                 self.image=self.imgs[22] #on update l'image
-            elif self.animactu[0]=="att2" and self.animactu[1]==2: #on vérifie l'état de l'animation
+            elif self.animactu[0]=="att2" and self.animactu[1]==2 and attres: #on vérifie l'état de l'animation
                 self.animactu=["att2",0] #on update l'animation en cour
                 self.image=self.imgs[20] #on update l'image
         elif aa=="Att3": #Attaque 3
+            attres=False
             if time.time()-self.datt3 >= self.attaque3[2] and self.vie>0: #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a attaqué avec l'attaque 3 et maintenant est supérieur ou égal au temps minimum
                 self.bloquerattaque=False #le personnage ne bloque plus les attaques
                 self.datt3=time.time() #mise à jour de la variable (derniere fois attaque 3)
@@ -392,6 +432,7 @@ class Perso(): #classe personnage
                             if p.vie<=0: p.image=p.imgs[28]
                             if self.attaque3[6]!=None: p.image_effet,p.tpef=[self.imgs[27],self.attaque3[6]],time.time()
                             p.drdgts=time.time()
+                            attres=True
             if self.animactu==None or self.animactu[0]!="att3": #si il n'y a pas d'animation ou une différente de l'animation (attaque 3)
                 self.animactu=["att3",0] #on update l'animation en cour
                 self.image=self.imgs[24] #on update l'image
@@ -401,24 +442,25 @@ class Perso(): #classe personnage
             elif self.animactu[0]=="att3" and self.animactu[1]==1: #on vérifie l'état de l'animation
                 self.animactu=["att3",2] #on update l'animation en cour
                 self.image=self.imgs[26] #on update l'image
-            elif self.animactu[0]=="att3" and self.animactu[1]==2: #on vérifie l'état de l'animation
+            elif self.animactu[0]=="att3" and self.animactu[1]==2 and attres: #on vérifie l'état de l'animation
                 self.animactu=["att3",0] #on update l'animation en cour
                 self.image=self.imgs[24] #on update l'image
         elif aa=="Defence": #Défence
             if self.vie>0:
                 self.bloquerattaque=True # le personnage bloque les attaques
-                if self.animactu==None or self.animactu[0]!="def": #si il n'y a pas d'animation ou une différente de l'animation (defence)
-                    self.animactu=["def",0] #on update l'animation en cour
-                    self.image=self.imgs[13] #on update l'image
-                elif self.animactu[0]=="def" and self.animactu[1]==0: #on vérifie l'état de l'animation
-                    self.animactu=["def",1] #on update l'animation en cour
-                    self.image=self.imgs[14] #on update l'image
-                elif self.animactu[0]=="def" and self.animactu[1]==1: #on vérifie l'état de l'animation
-                    self.animactu=["def",2] #on update l'animation en cour
-                    self.image=self.imgs[15] #on update l'image
-                elif self.animactu[0]=="def" and self.animactu[1]==2: #on vérifie l'état de l'animation
-                    self.animactu=["def",0] #on update l'animation en cour
-                    self.image=self.imgs[13] #on update l'image
+                if self.animactu==None or (not self.animactu[0]=="def" and self.animactu[1]==2):
+                    if self.animactu==None or self.animactu[0]!="def": #si il n'y a pas d'animation ou une différente de l'animation (defence)
+                        self.animactu=["def",0] #on update l'animation en cour
+                        self.image=self.imgs[13] #on update l'image
+                    elif self.animactu[0]=="def" and self.animactu[1]==0: #on vérifie l'état de l'animation
+                        self.animactu=["def",1] #on update l'animation en cour
+                        self.image=self.imgs[14] #on update l'image
+                    elif self.animactu[0]=="def" and self.animactu[1]==1: #on vérifie l'état de l'animation
+                        self.animactu=["def",2] #on update l'animation en cour
+                        self.image=self.imgs[15] #on update l'image
+                    elif self.animactu[0]=="def" and self.animactu[1]==2: #on vérifie l'état de l'animation
+                        self.animactu=["def",0] #on update l'animation en cour
+                        self.image=self.imgs[13] #on update l'image
         elif aa=="Special":
             if time.time()-self.dspec >= self.special[3]:
                 self.dspec=time.time()
@@ -513,8 +555,90 @@ class Perso(): #classe personnage
                 self.animactu=["special",0] #on update l'animation en cour
                 self.image=self.imgs[31] #on update l'image
 
+class Objet:
+    def __init__(self,tp,x,y):
+        self.nom=tp[0]
+        self.tp_effet=tp[1]
+        self.effet=tp[2]
+        self.image=tp[3]
+        self.delete=False
+        self.rect=pygame.Rect(x,y,rx(50),ry(50))
+        self.posX=x
+        self.posY=y
+    def util(self,perso,prs,mape,t):
+        if self.tp_effet=="bouclier+":
+            perso.bouclier+=self.effet
+            if perso.bouclier>perso.bouclier_total: perso.bouclier=perso.bouclier_total
+            perso.hist_bonus_texte.append( ["bouclier +"+str(self.effet),0] )
+        elif self.tp_effet=="bouclier++":
+            perso.bouclier=perso.bouclier_total
+            perso.hist_bonus_texte.append( ["bouclier rempli",0] )
+        elif self.tp_effet=="vie+":
+            perso.vie+=self.effet
+            if perso.vie>perso.vie_totale: perso.vie=perso.vie_totale
+            perso.hist_bonus_texte.append( ["vie +"+str(self.effet)+"pv",0] )
+        elif self.tp_effet=="vie++":
+            perso.vie=perso.vie_totale
+            perso.hist_bonus_texte.append( ["guéri",0] )
+        elif self.tp_effet=="att_degats+":
+            perso.attaque1[0]+=self.effet
+            perso.attaque2[0]+=self.effet
+            perso.attaque3[0]+=self.effet
+            perso.hist_bonus_texte.append( ["att +"+str(self.effet)+" dgts",0] )
+        elif self.tp_effet=="vitesse+":
+            perso.vitesse+=self.effet
+            perso.hist_bonus_texte.append( ["vitesse +"+str(self.effet),0] )
+        elif self.tp_effet=="teletransportation":
+            xx=random.randint(100,mape.shape[0]*t-200)
+            yy=random.randint(100,mape.shape[1]*t-200)
+            perso.posX,perso.posY=xx,yy
+            perso.update_cam()
+            perso.hist_bonus_texte.append( ["télétransporté",0] )
+        elif self.tp_effet=="teletransportation_to_ennemi":
+            en=random.choice(prs)
+            nb=0
+            while en==None or en==perso:
+                en=random.choice(prs)
+                nb+=1
+                if nb==100: break
+            xx=en.posX+random.randint(-50,50)
+            yy=en.posY+random.randint(-50,50)
+            perso.posX,perso.posY=xx,yy
+            perso.update_cam()
+            perso.hist_bonus_texte.append( ["télétransporté",0] )
+        elif self.tp_effet=="-degats":
+            for p in prs:
+                if p!=None and p!=perso:
+                    p.vie-=self.effet
+                    p.hist_degats_texte.append( ["-"+str(self.effet)+"pv",0] )
+        elif self.tp_effet=="brouillard":
+            for p in prs:
+                if p!=None and p!=perso:
+                    p.etat.append("brouillard")
+                    p.tpsrestant_etat.append(self.effet)
+                    p.hist_degats_texte.append(["brouillard ("+str(self.effet)+"sec)",0])
+        elif self.tp_effet=="invisibilite":
+            perso.etat.append("invisible")
+            perso.tpsrestant_etat.append(self.effet)
+            perso.hist_bonus_texte.append( ["invisible ("+str(self.effet)+"sec)",0])
+        elif self.tp_effet=="invincibilite":
+            perso.etat.append("invincible")
+            perso.tpsrestant_etat.append(self.effet)
+            perso.hist_bonus_texte.append( ["invincible ("+str(self.effet)+"sec)",0])
+        elif self.tp_effet=="affaiblissement":
+            for p in prs:
+                if p!=None and p!=perso:
+                    p.etat.append("affaibli")
+                    p.tpsrestant_etat.append(self.effet)
+                    p.hist_degats_texte.append( ["affaibli ("+str(self.effet)+"sec)",0] )
+        elif self.tp_effet=="esquive+":
+            perso.esquive+=self.effet
+            if perso.esquive > 95: perso.esquive=95
+            perso.hist_bonus_texte.append( ["esquive +"+str(self.effet)+"%",0] )
+            
+
 txtvem=pretexte("Vous etes mort !",35,(100,100,00))
-def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
+def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bons,imgbrouillard): #fonction afficheg_jeu_fen qui va afficher les parties de l'ecran des joueurs
     fenx,feny,fentx,fenty=perso.fx,perso.fy,perso.ftx,perso.fty
     pygame.draw.rect(fenetre,(0,0,0),(fenx,feny,fentx,fenty),0) #on nettoie l'ecran en noir
     pygame.draw.rect(fenetre,(250,250,250),(fenx,feny,fentx,fenty),3) #on affiche les contours de l'ecran
@@ -540,7 +664,7 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
                     fenetre.blit(img,[xxx,yyy])
                     """
     for p in prs: #on parcour tous les personnages
-        if p!=None and (p.posX+perso.cam[0]>=0 and p.posX+perso.cam[0]<=fentx and p.posY+perso.cam[1]>=0 and p.posY+perso.cam[1]<=fenty): #si le personnage existe et qu'il est différent du personnage de la fenetre
+        if p!=None and (p.posX+perso.cam[0]>=0 and p.posX+perso.cam[0]<=fentx and p.posY+perso.cam[1]>=0 and p.posY+perso.cam[1]<=fenty) and not "invisible" in p.etat: #si le personnage existe et qu'il est différent du personnage de la fenetre
             fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
             if p.image_effet!=None:
                 fenetre.blit(p.image_effet[0],[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
@@ -549,19 +673,23 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bonus): #fonction
                 texte(ht[0],fenx+perso.cam[0]+p.posX+p.tx,feny+perso.cam[1]+p.posY-ht[1],25,(255,0,0))
             for ht in p.hist_bonus_texte:
                 texte(ht[0],fenx+perso.cam[0]+p.posX-p.tx/2,feny+perso.cam[1]+p.posY-ht[1],25,(0,0,255))
-    for b in bonus:
-        if b.posX >= perso.cam[0] and b.posX <= perso.cam[0]+fentx and b.posY >= perso.cam[1] and b.posY <= perso.cam[1]+fenty:
+    for b in bons:
+        if b.posX+perso.cam[0] >= 0 and b.posX+perso.cam[0] <= fentx and b.posY+perso.cam[1] >= 0 and b.posY+perso.cam[1] <= fenty:
             fenetre.blit(b.image,[fenx+perso.cam[0]+b.posX,feny+perso.cam[1]+b.posY])
+    if "brouillard" in perso.etat:
+        fenetre.blit(imgbrouillard,[fenx,feny])
     clvie=[int(perso.vie/perso.vie_totale*255.0),0,0]
     if clvie[0]<0 or clvie[0]> 255: clvie[0]=0
     clvie=tuple(clvie)
     pygame.draw.rect(fenetre,clvie,(fenx+50,feny+15,int(perso.vie/perso.vie_totale*float(fentx-100.0)),35),0)
     pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+15,int(fentx-100),35),2)
+    texte(str(perso.vie)+"/"+str(perso.vie_totale),fenx+60,feny+27,15,(255-clvie[0],0,0))
     clbouclier=[0,0,int(perso.bouclier/perso.bouclier_total*255.0)]
     if clbouclier[2] < 0 or clbouclier[2] > 255: clbouclier[2]=0
     clbouclier=tuple(clbouclier)
-    pygame.draw.rect(fenetre,clbouclier,(fenx+50,feny+60,int(perso.bouclier/perso.bouclier_total*float(fentx-100.0)),5),0)
-    pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),5),1)
+    pygame.draw.rect(fenetre,clbouclier,(fenx+50,feny+60,int(perso.bouclier/perso.bouclier_total*float(fentx-100.0)),15),0)
+    pygame.draw.rect(fenetre,(0,0,0),(fenx+50,feny+60,int(fentx-100),15),1)
+    texte(str(perso.bouclier)+"/"+str(perso.bouclier_total),fenx+60,feny+59,15,(0,0,255-clbouclier[2]))
     clatt1=(25,25,25)
     if time.time()-perso.datt1 >= perso.attaque1[2]: clatt1=(250,150,0)
     clatt2=(25,25,25)
@@ -601,28 +729,30 @@ def bot(perso,prs,objsmap,mape,t):
             if nbr>=100: break
         perso.cible=aa
     if perso.cible!=None:
-        if random.randint(1,100)==1:
+        rb=2
+        fb=20
+        if random.randint(1,rb)==1:
             if perso.cible.posX < perso.posX and abs(perso.posX-perso.cible.posX) > perso.vitesse : perso.bouger("Left",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,rb)==1:
             if perso.cible.posX > perso.posX and abs(perso.posX-perso.cible.posX) > perso.vitesse: perso.bouger("Right",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,rb)==1:
             if perso.cible.posY < perso.posY and abs(perso.posY-perso.cible.posY) > perso.vitesse: perso.bouger("Up",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,rb)==1:
             if perso.cible.posY > perso.posY and abs(perso.posY-perso.cible.posY) > perso.vitesse: perso.bouger("Down",objsmap,prs,mape,t)
         dd=dist(perso.cible.posX,perso.cible.posY,perso.posX,perso.posY)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.attaque1[1]: perso.bouger("Att1",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.attaque2[1]: perso.bouger("Att2",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.attaque3[1]: perso.bouger("Att3",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.cible.attaque1[1]: perso.bouger("Defence",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.cible.attaque2[1]: perso.bouger("Defence",objsmap,prs,mape,t)
-        if random.randint(1,100)==1:
+        if random.randint(1,fb)==1:
             if dd < perso.cible.attaque3[1]: perso.bouger("Defence",objsmap,prs,mape,t)
-        if random.randint(1,100):
+        if random.randint(1,fb):
             if time.time()-perso.dspec>=perso.special[3]: perso.bouger("Special",objsmap,prs,mape,t)
     else:
         lst=["Left","Right","Up","Down","Att1","Att2","Att3","Defence"]

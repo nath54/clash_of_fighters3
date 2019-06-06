@@ -12,7 +12,7 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
         for y in range(mape.shape[1]): #boucle qui parcour tous les y de mape
             mape[x,y]=random.randint(0,len(emaps)-1) #on assigne a la mape une valeur aléatoire
     objsmap=[] #liste qui contient tous les objets qui seront sur la map (ex:un arbre)
-    bonus=[] #liste bonus qui contient tous les bonus qui seront sur la map (ex:du bouclier)
+    bons=[] #liste bonus qui contient tous les bonus qui seront sur la map (ex:du bouclier)
     prs=[None,None,None,None] #liste prs qui contient les personnages des joueurs
     nbj=0  #variable nbj qui contient le nombre de joueurs
     if p1!=None: nbj=nbj+1 #si p1 est différent de None , alors nbj est incrémenté de 1
@@ -29,6 +29,13 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
     if p2!=None: prs[1],a=Perso(p2,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p2 est différent de None , alors l'élément 1 de la liste prs vaut le personnage du player 2 et a est incrémenté de 1
     if p3!=None: prs[2],a=Perso(p3,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p3 est différent de None , alors l'élément 2 de la liste prs vaut le personnage du player 3 et a est incrémenté de 1
     if p4!=None: prs[3],a=Perso(p4,random.randint(100,mape.shape[0]*tm-100),random.randint(100,mape.shape[1]*tm-100),tp,fens[a][0],fens[a][1],fens[a][2],fens[a][3]),a+1 #si p4 est différent de None , alors l'élément 3 de la liste prs vaut le personnage du player 4 et a est incrémenté de 1
+    mftx,mfty=0,0
+    for p in prs:
+        if p!=None: 
+            mftx+=p.ftx
+            mfty+=p.fty
+    mftx,mfty=int(mftx/nbj),int(mfty/nbj)
+    imgb=pygame.transform.scale(pygame.image.load("images/embrouillé.png"),[mftx,mfty])
     encoure=True #variable encoure qui est vraie tant que le jeu tourne
     fps=0
     while encoure: #tant que encoure est vrai
@@ -36,16 +43,16 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
         #affichage
         a=0 #initialisation de la variable a
         if p1!=None and prs[0]!=None: #si p1 est différent de None
-            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[0],tm,bonus) #on affiche la fenetre du premier joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[0],tm,bons,imgb) #on affiche la fenetre du premier joueur
             a=a+1 #on incrémente a de 1
         if p2!=None and prs[1]!=None: #si p2 est différent de None
-            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[1],tm,bonus) #on affiche la fenetre du second joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[1],tm,bons,imgb) #on affiche la fenetre du second joueur
             a=a+1 #on incrémente a de 1
         if p3!=None and prs[2]!=None: #si p3 est différent de None
-            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[2],tm,bonus) #on affiche la fenetre du troisieme joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[2],tm,bons,imgb) #on affiche la fenetre du troisieme joueur
             a=a+1 #on incrémente a de 1
         if p4!=None and prs[3]!=None: #si p4 est différent de None
-            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[3],tm,bonus) #on affiche la fenetre du quatrieme joueur
+            affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,prs[3],tm,bons,imgb) #on affiche la fenetre du quatrieme joueur
         aff_mini_mape(prs,mape,tm)
         pygame.display.flip()
         pygame.display.update()
@@ -111,6 +118,22 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
         if p4tp==1: bot(prs[3],prs,objsmap,mape,tm) #si le perso 4 est un bot , alors le bot joue le perso 4
         for p in prs:
             if p!=None:
+                pr=pygame.Rect(p.posX,p.posY,p.tx,p.ty)
+                for b in bons:
+                    if not b.delete and b.rect.colliderect(pr):
+                        b.util(p,prs,mape,tm)
+                        b.delete=True
+                for x in range(len(p.etat)):
+                    p.tpsrestant_etat[x]-=time.time()-p.dtpsetat
+                for e in p.etat:
+                    di=p.etat.index(e)
+                    if p.tpsrestant_etat[di]<=0:
+                        try:
+                            del(p.tpsrestant_etat[di])
+                            del(p.etat[di])
+                        except:
+                            pass
+                p.dtpsetat=time.time()
                 aa=False
                 for ht in p.hist_degats_texte:
                     ht[1]+=1
@@ -131,6 +154,14 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
                         p.bouclier+=1
                 if p.vie<0: p.vie=0
                 if p.bouclier<0: p.bouclier=0
+        btd=[]
+        for b in bons:
+            if b.delete:
+                try:
+                    del(bons[bons.index(b)])
+                except: pass
+        while len(bons) < 10:
+            bons.append( Objet(random.choice(bns),random.randint(100,mape.shape[0]*tm-200),random.randint(100,mape.shape[1]*tm-200)) )
         nbev=0
         if prs[0]!=None and prs[0].vie>0: nbev+=1
         if prs[1]!=None and prs[1].vie>0: nbev+=1
