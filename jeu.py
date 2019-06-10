@@ -15,6 +15,10 @@ def main(p1,p2,p3,p4,p1keys,p2keys,p3keys,p4keys,p1tp,p2tp,p3tp,p4tp): #fonction
     bons=[] #liste bonus qui contient tous les bonus qui seront sur la map (ex:du bouclier)
     prs=[None,None,None,None] #liste prs qui contient les personnages des joueurs
     nbj=0  #variable nbj qui contient le nombre de joueurs
+    if p1==-1: p1=random.randint(0,len(persos)-1)
+    if p2==-1: p2=random.randint(0,len(persos)-1)
+    if p3==-1: p3=random.randint(0,len(persos)-1)
+    if p4==-1: p4=random.randint(0,len(persos)-1)
     if p1!=None: nbj=nbj+1 #si p1 est différent de None , alors nbj est incrémenté de 1
     if p2!=None: nbj=nbj+1 #si p2 est différent de None , alors nbj est incrémenté de 1
     if p3!=None: nbj=nbj+1 #si p3 est différent de None , alors nbj est incrémenté de 1

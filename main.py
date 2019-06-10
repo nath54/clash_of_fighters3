@@ -10,7 +10,7 @@ txts=[pretexte("The Clash of Fighters 3",50,(250,100,50)),pretexte("Keys :",25,(
       pretexte("v",17,(0,0,0)),pretexte("r",17,(0,0,0)),pretexte("Player 3 : ",20,(255,255,255)),pretexte("i",17,(0,0,0)),pretexte("k",17,(0,0,0)),pretexte("j",17,(0,0,0)),pretexte("l",17,(0,0,0)),
       pretexte("y",17,(0,0,0)),pretexte("u",17,(0,0,0)),pretexte("g",17,(0,0,0)),pretexte("h",17,(0,0,0)),pretexte("Player 4 :",20,(255,255,255)),
       pretexte("KP8",17,(0,0,0)),pretexte("KP2",17,(0,0,0)),pretexte("KP4",17,(0,0,0)),pretexte("KP6",17,(0,0,0)),pretexte("KP0",17,(0,0,0)),pretexte("KP .",17,(0,0,0)),pretexte("KP ENTER",17,(0,0,0)),pretexte("KP PLUS",17,(0,0,0)),
-      pretexte("Play ! ",25,(0,0,0)),pretexte("humain",20,(0,0,0)),pretexte("bot",20,(0,0,0)),pretexte("special",17,(0,0,0)),pretexte("home",17,(0,0,0)),pretexte("t",17,(0,0,0)),pretexte("o",17,(0,0,0)),pretexte("KP 1",17,(0,0,0)),]
+      pretexte("Play ! ",25,(0,0,0)),pretexte("humain",20,(0,0,0)),pretexte("bot",20,(0,0,0)),pretexte("special",17,(0,0,0)),pretexte("home",17,(0,0,0)),pretexte("t",17,(0,0,0)),pretexte("o",17,(0,0,0)),pretexte("KP 1",17,(0,0,0)),pretexte("aléatoire",20,(255,255,255))]
 
 clf=(64,121,204)
 def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
@@ -32,9 +32,15 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     #player 1
     atexte(txts[10],150,150)
     bts[1]=button(150,230,100,100,(100,100,100),(0,0,0))
-    if p1!=None:
+    if p1!=None and p1!=-1:
         texte(persos[p1][0],150,180,20,(255,255,255))
         fenetre.blit(persos[p1][8],[rx(150),ry(230)])
+        bts[5]=button(150,510,75,35,(200,200,200),(0,0,0))
+        if p1tp==0: atexte(txts[47],160,520)
+        else: atexte(txts[48],160,520)
+    elif p1==-1:
+        atexte(txts[54],150,180)
+        fenetre.blit(imgrandom,[rx(150),ry(230)])
         bts[5]=button(150,510,75,35,(200,200,200),(0,0,0))
         if p1tp==0: atexte(txts[47],160,520)
         else: atexte(txts[48],160,520)
@@ -50,9 +56,15 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     #player 2
     atexte(txts[19],300,150)
     bts[2]=button(300,230,100,100,(100,100,100),(0,0,0))
-    if p2!=None:
+    if p2!=None and p2!=-1:
         texte(persos[p2][0],300,180,20,(255,255,255))
         fenetre.blit(persos[p2][8],[rx(300),ry(230)])
+        bts[6]=button(300,510,75,35,(200,200,200),(0,0,0))
+        if p2tp==0: atexte(txts[47],310,520)
+        else: atexte(txts[48],310,520)
+    elif p2==-1:
+        atexte(txts[54],300,180)
+        fenetre.blit(imgrandom,[rx(300),ry(230)])
         bts[6]=button(300,510,75,35,(200,200,200),(0,0,0))
         if p2tp==0: atexte(txts[47],310,520)
         else: atexte(txts[48],310,520)
@@ -68,9 +80,15 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     #player 3
     atexte(txts[28],450,150)
     bts[3]=button(450,230,100,100,(100,100,100),(0,0,0))
-    if p3!=None:
+    if p3!=None and p3!=-1:
         texte(persos[p3][0],450,180,20,(255,255,255))
         fenetre.blit(persos[p3][8],[rx(450),ry(230)])
+        bts[7]=button(450,510,75,35,(200,200,200),(0,0,0))
+        if p3tp==0: atexte(txts[47],460,520)
+        else: atexte(txts[48],460,520)
+    elif p3==-1:
+        atexte(txts[54],450,180)
+        fenetre.blit(imgrandom,[rx(450),ry(230)])
         bts[7]=button(450,510,75,35,(200,200,200),(0,0,0))
         if p3tp==0: atexte(txts[47],460,520)
         else: atexte(txts[48],460,520)
@@ -86,9 +104,15 @@ def aff_menu(p1,p2,p3,p4,fps,p1tp,p2tp,p3tp,p4tp):
     #player 4
     atexte(txts[37],600,150)
     bts[4]=button(600,230,100,100,(100,100,100),(0,0,0))
-    if p4!=None:
+    if p4!=None and p4!=-1:
         texte(persos[p4][0],600,180,20,(255,255,255))
         fenetre.blit(persos[p4][8],[rx(600),ry(230)])
+        bts[8]=button(600,510,75,35,(200,200,200),(0,0,0))
+        if p4tp==0: atexte(txts[47],610,520)
+        else: atexte(txts[48],610,520)
+    elif p4==-1:
+        atexte(txts[54],600,180)
+        fenetre.blit(imgrandom,[rx(600),ry(230)])
         bts[8]=button(600,510,75,35,(200,200,200),(0,0,0))
         if p4tp==0: atexte(txts[47],610,520)
         else: atexte(txts[48],610,520)
@@ -137,19 +161,19 @@ def main():
                     if b != None and rpos.colliderect(b):
                         di=bts.index(b)
                         if di==1:
-                            if p1==None: p1=0
+                            if p1==None: p1=-1
                             elif p1<len(persos)-1: p1+=1
                             else: p1=None
                         elif di==2:
-                            if p2==None: p2=0
+                            if p2==None: p2=-1
                             elif p2<len(persos)-1: p2+=1
                             else: p2=None
                         elif di==3:
-                            if p3==None: p3=0
+                            if p3==None: p3=-1
                             elif p3<len(persos)-1: p3+=1
                             else: p3=None
                         elif di==4:
-                            if p4==None: p4=0
+                            if p4==None: p4=-1
                             elif p4<len(persos)-1: p4+=1
                             else: p4=None
                         elif di==0 and (p1!=None or p2!=None or p3!=None or p4!=None):

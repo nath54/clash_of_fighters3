@@ -34,6 +34,8 @@ def dist(x1,y1,x2,y2): return int(math.sqrt(math.pow(x1-x2,2)+math.pow(y1-y2,2))
 emaps=[ ["herbe",True,"herbe.png"] , ["terre",True,"terre.png"] ]
 #0=nom , 1=pmd
 
+imgrandom=pygame.transform.scale(pygame.image.load("images/random.png"),[rx(100),ry(100)])
+
 #liste persos qui contient toutes les données des personnages
 persos=[  [ "jarry",1000,100,20,5,[35,350,1,[],15,"coup de pistolet",2],[20,70,0.7,[],5,"coup de poing",2],[250,250,50,[],50,"lasers dans le sol qui ressortent au niveau de l'ennemi",8],pygame.transform.scale(pygame.image.load(dim+"jarry_portrait.png"),[rx(100),ry(100)]),["sa portée augmente de 20","portée+",20,20]]
           ,["bismak",2000,200,10,3,[50,100,1.2,[],15,"coup d'épée",5],[50,100,1.2,[],15,"coup d'épée",5],[200,150,45,[],75,"super coup d'épée",5],pygame.transform.scale(pygame.image.load(dim+"bismak_portrait.png"),[rx(100),ry(100)]),["il inflige plus de degats","degats+",5,15]]
@@ -189,6 +191,7 @@ class Perso(): #classe personnage
         self.etat=[]
         self.tpsrestant_etat=[]
         self.dtpsetat=time.time()
+        self.dernier_attaque=[]
     def bouger(self,aa,objsmap,prs,mape,t): #fonction bouger du personnage qui permet au personnage de bouger, d'attaquer et de parer les coups de l'adversaire
         if aa=="Up": #bouger vers le haut
             if time.time()-self.dbouger >= self.tpsbouger and self.vie>0 : #on vérifie que le temps qu'il y a entre la derniere fois que le personnage a bougé et maintenant est supérieur ou égal au temps minimum
@@ -670,15 +673,20 @@ def affichage_jeu_fen(fenetre,mape,imgmape,objsmap,prs,perso,t,bons,imgbrouillar
                     fenetre.blit(img,[xxx,yyy])
                     """
     for p in prs: #on parcour tous les personnages
-        if p!=None and (p.posX+perso.cam[0]>=0 and p.posX+perso.cam[0]<=fentx and p.posY+perso.cam[1]>=0 and p.posY+perso.cam[1]<=fenty) and not "invisible" in p.etat: #si le personnage existe et qu'il est différent du personnage de la fenetre
-            fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
-            if p.image_effet!=None:
-                fenetre.blit(p.image_effet[0],[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
-                if time.time()-p.tpef>=p.image_effet[1]: p.image_effet=None
-            for ht in p.hist_degats_texte:
-                texte(ht[0],fenx+perso.cam[0]+p.posX+p.tx,feny+perso.cam[1]+p.posY-ht[1],25,(255,0,0))
-            for ht in p.hist_bonus_texte:
-                texte(ht[0],fenx+perso.cam[0]+p.posX-p.tx/2,feny+perso.cam[1]+p.posY-ht[1],25,(0,0,255))
+        if p!=None :
+            if (p.posX+perso.cam[0]>=0 and p.posX+perso.cam[0]<=fentx and p.posY+perso.cam[1]>=0 and p.posY+perso.cam[1]<=fenty) and not "invisible" in p.etat: #si le personnage existe et qu'il est différent du personnage de la fenetre
+                fenetre.blit(p.image,[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
+                if p.image_effet!=None:
+                    fenetre.blit(p.image_effet[0],[fenx+perso.cam[0]+p.posX,feny+perso.cam[1]+p.posY])
+                    if time.time()-p.tpef>=p.image_effet[1]: p.image_effet=None
+                for ht in p.hist_degats_texte:
+                    texte(ht[0],fenx+perso.cam[0]+p.posX+p.tx,feny+perso.cam[1]+p.posY-ht[1],25,(255,0,0))
+                for ht in p.hist_bonus_texte:
+                    texte(ht[0],fenx+perso.cam[0]+p.posX-p.tx/2,feny+perso.cam[1]+p.posY-ht[1],25,(0,0,255))
+            if p.nom=="jarry":
+                if p.animactu in [["att1",2],["att2",2]]:
+                    for pp in p.dernier_attaque:
+                        pygame.draw.line(fenetre,(0,0,0),(fenx+p.posX+p.tx/2,feny+p.posY+p.ty/2),(fenx+pp.posX+pp.tx/2,feny+pp.posY+pp.ty/2),1)
     for b in bons:
         if b.posX+perso.cam[0] >= 0 and b.posX+perso.cam[0] <= fentx and b.posY+perso.cam[1] >= 0 and b.posY+perso.cam[1] <= fenty:
             fenetre.blit(b.image,[fenx+perso.cam[0]+b.posX,feny+perso.cam[1]+b.posY])
@@ -734,7 +742,7 @@ def bot(perso,prs,objsmap,mape,t):
             nbr+=1
             if nbr>=100: break
         perso.cible=aa
-    if perso.cible!=None or not "invisible" in perso.cible.etat:
+    if perso.cible!=None and not "invisible" in perso.cible.etat:
         rb=2
         fb=20
         if "brouillard" in perso.etat:
