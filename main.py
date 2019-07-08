@@ -1,4 +1,5 @@
 #coding:utf-8
+#!/bin/python3
 from lib import *
 import jeu
 

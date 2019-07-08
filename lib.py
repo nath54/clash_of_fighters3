@@ -1,4 +1,5 @@
 #coding:utf-8
+#!/bin/python3
 #lib.py
 import random,pygame,time,numpy,math #on importe les librairies random , pygame , time , numpy et math
 from pygame.locals import * #on importe tout dans la librairie pygame.locals
